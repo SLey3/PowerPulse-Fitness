@@ -1,0 +1,23 @@
+services:
+  dev-db:
+    image: postgres:latest
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: powerpulse-dev
+    networks:
+      - PowerPulse-Fitness
+  test-db:
+    image: postgres:latest
+    ports:
+      - 5435-5433
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: powerpulse-test
+    networks:
+      - PowerPulse-Fitness
+networks:
+  PowerPulse-Fitness:
