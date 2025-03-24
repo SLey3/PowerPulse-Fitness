@@ -1,4 +1,4 @@
-import make_nav_links from "@/lib/routes/navroutes"
+import make_nav_links from "@/lib/routes"
 import { Avatar, AvatarImage } from "./ui/avatar"
 import {
     DropdownMenu,
