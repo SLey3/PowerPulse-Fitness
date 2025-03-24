@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,14 +8,65 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  email String
-  hash String
-  fullName String
-  firstName String
-  lastName String
-  phone Int
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  passwordHash String
+  avatarUrl    String        @default("/default-avatar.jpg")
+  firstName    String
+  lastName     String
+  phone        String?
+  role         UserRole      @default(USER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  workoutLogs  WorkoutLog[]
+  fitnessGoals FitnessGoal[]
+}
+
+model WorkoutLog {
+  id          Int               @id @default(autoincrement())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  description String
+  // sets        Int
+  // reps        Int   This will be in the routine json object including a routine name field
+  // weight      Float
+  routine     Json              @db.JsonB
+  duration    Int
+  notes       String?
+  userId      Int
+  user        User              @relation(fields: [userId], references: [id])
+  categories  WorkoutCategory[] @relation("WorkoutLogToCategory")
+}
+
+model WorkoutCategory {
+  id              Int          @id @default(autoincrement())
+  name            String       @unique
+  associated_user String // This is so that any category made by a user can be deleted by said user whether by choice or thru the deletion of their account
+  logs            WorkoutLog[] @relation("WorkoutLogToCategory")
+}
+
+model FitnessGoal {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  title       String
+  description String
+  completeBy  DateTime
+  progress    Float      @default(0.0)
+  status      GoalStatus @default(NOT_STARTED)
+  subgoals    Json?      @db.JsonB
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+}
+
+enum GoalStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }

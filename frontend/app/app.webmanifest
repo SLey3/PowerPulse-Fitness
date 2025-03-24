@@ -1,0 +1,8 @@
+{
+    "$schema": "https://json.schemastore.org/chrome-manifest",
+    "manifest_version": 3,
+    "name": "Powerpulse Fitness",
+    "description": "",
+    "homepage_url": "/",
+    "version": "1.0"
+}

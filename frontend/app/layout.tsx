@@ -1,5 +1,14 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Exo_2 } from "next/font/google"
+import PrimaryNavBar from "@/components/primary-navbar"
+import "./globals.css"
+
+
+const exo_2 = Exo_2({
+  subsets: ['latin'],
+  weight: "300",
+  
+});
 
 export const metadata: Metadata = {
   title: "PowerPulse Fitness",
@@ -14,9 +23,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased min-h-screen bg-gradient-to-tr from-black via-gray-800 to-black`}
+        className={`antialiased min-h-screen bg-gradient-to-tr from-black via-gray-800 to-black text-white ${exo_2.className}`}
       >
-        {children}
+        <div className="flex flex-col space-y-5">
+          <div className="pt-3 md:pl-10">
+            <PrimaryNavBar />
+          </div>
+          <div className="md:pl-10">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
