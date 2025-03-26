@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  passwordHash String
-  avatarUrl    String        @default("/default-avatar.jpg")
-  firstName    String
-  lastName     String
-  phone        String?
-  role         UserRole      @default(USER)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  workoutLogs  WorkoutLog[]
-  fitnessGoals FitnessGoal[]
+  id             Int           @id @default(autoincrement())
+  email          String        @unique
+  passwordHash   String
+  avatarUrl      String        @default("/default-avatar.jpg")
+  firstName      String
+  lastName       String
+  phone          String?
+  role           UserRole      @default(USER)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  weight Float // will be stored in kg
+  workoutLogs    WorkoutLog[]
+  fitnessGoals   FitnessGoal[]
+  savedExercises Exercises[]
 }
 
 model WorkoutLog {
@@ -33,16 +35,19 @@ model WorkoutLog {
   routine     Json              @db.JsonB
   duration    Int
   notes       String?
+  template    Boolean           @default(false)
+  estimatedCalorieBurn Int
   userId      Int
   user        User              @relation(fields: [userId], references: [id])
-  categories  WorkoutCategory[] @relation("WorkoutLogToCategory")
+  categories  WorkoutCategory[]
 }
 
 model WorkoutCategory {
-  id              Int          @id @default(autoincrement())
-  name            String       @unique
+  id              Int        @id @default(autoincrement())
+  name            String     @unique
   associated_user String // This is so that any category made by a user can be deleted by said user whether by choice or thru the deletion of their account
-  logs            WorkoutLog[] @relation("WorkoutLogToCategory")
+  userId          Int
+  logs            WorkoutLog @relation(fields: [userId], references: [id])
 }
 
 model FitnessGoal {
@@ -57,6 +62,17 @@ model FitnessGoal {
   subgoals    Json?      @db.JsonB
   userId      Int
   user        User       @relation(fields: [userId], references: [id])
+}
+
+model Exercises {
+  id        Int     @id @default(autoincrement())
+  name      String
+  type      String
+  muscle    String
+  equipment String
+  notes     String?
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 enum GoalStatus {

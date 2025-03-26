@@ -1,16 +1,20 @@
+export interface MakeNavLinksReturnT {
+    name: string;
+    href: string;
+    cat?: 'account' | 'main_func'
+}
+
+
 /**
- * Generates navigation links based on the specified navigation type.
- * 
- * @param nav_type - The type of navigation to generate links for.
- *                  'primary' generates links for the main navigation.
- *                  'dashboard' currently returns an empty array.
- * 
- * @returns An array of navigation link objects, each containing a name and href property.
- *          For 'primary' type, returns links to home, features, about, and sign in pages.
- *          For 'dashboard' type, returns an empty array.
- *          For 'avatar-dropdown type, returns links to edit profile, dashboard, and sign out
+ * Generates an array of navigation link objects based on the specified navigation type.
+ *
+ * @param nav_type - The type of navigation links to generate.
+ *                   - "primary": Returns main navigation links used for the public site.
+ *                   - "dashboard": Returns an empty array intended for dashboard links.
+ *                   - "avatar-dropdown": Returns account-related and main function links for the avatar dropdown menu.
+ * @returns An array of objects representing navigation links for the given navigation type.
  */
-export default function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropdown'): { name: string, href: string }[] {
+export default function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropdown'): MakeNavLinksReturnT[] {
     switch(nav_type) {
         case "primary":
             return [
@@ -37,11 +41,28 @@ export default function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avat
             return [
                 {
                     name: 'Edit Profile',
-                    href: '/acc/manage'
+                    href: '/acc/manage',
+                    cat: 'account'
                 },
                 {
                     name: 'Dashboard',
-                    href: '/acc/dashboard'
+                    href: '/acc/dashboard',
+                    cat: 'account'
+                },
+                {
+                    name: 'Fitness Goals',
+                    href: '/fit/goals',
+                    cat: 'main_func'
+                },
+                {
+                    name: 'Fitness Logs',
+                    href: '/fit/logs',
+                    cat: 'main_func'
+                },
+                {
+                    name: 'Fitness Analytics',
+                    href: '/fit/analytics',
+                    cat: 'main_func'
                 },
                 {
                     name: 'Sign Out',

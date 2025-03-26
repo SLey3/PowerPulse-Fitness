@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased min-h-screen bg-gradient-to-tr from-black via-gray-800 to-black text-white ${exo_2.className}`}
+        className={`antialiased overscroll-none overflow-x-hidden min-h-screen bg-gradient-to-tr from-black via-gray-800 to-black text-white ${exo_2.className}`}
       >
         <div className="flex flex-col space-y-5">
           <div className="pt-3 md:pl-10">
