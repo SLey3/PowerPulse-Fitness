@@ -8,53 +8,70 @@ datasource db {
 }
 
 model User {
-  id             Int           @id @default(autoincrement())
-  email          String        @unique
-  passwordHash   String
-  avatarUrl      String        @default("/default-avatar.jpg")
-  firstName      String
-  lastName       String
-  phone          String?
-  role           UserRole      @default(USER)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  weight Float // will be stored in kg
-  workoutLogs    WorkoutLog[]
-  fitnessGoals   FitnessGoal[]
-  savedExercises Exercises[]
+  id                Int               @id @default(autoincrement())
+  email             String            @unique
+  passwordHash      String
+  avatarUrl         String            @default("/default-avatar.jpg")
+  firstName         String
+  lastName          String
+  phone             String?
+  role              UserRole          @default(USER)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  weight            Float // will be stored in kg
+  workoutLogs       WorkoutLog[]
+  workoutTemplates  WorkoutTemplate[]
+  fitnessGoals      FitnessGoal[]
+  savedExercises    Exercises[]
+  createdCategories WorkoutCategory[]
+}
+
+model WorkoutTemplate {
+  id           Int               @id @default(autoincrement())
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  templateName String            @unique
+  description  String
+  routine      Json              @db.JsonB
+  duration     Int
+  notes        String?
+  userId       Int
+  user         User              @relation(fields: [userId], references: [id])
+  categories   WorkoutCategory[]
 }
 
 model WorkoutLog {
-  id          Int               @id @default(autoincrement())
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  description String
+  id                   Int               @id @default(autoincrement())
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  description          String
   // sets        Int
   // reps        Int   This will be in the routine json object including a routine name field
   // weight      Float
-  routine     Json              @db.JsonB
-  duration    Int
-  notes       String?
-  template    Boolean           @default(false)
+  routine              Json              @db.JsonB
+  duration             Int
+  notes                String?
   estimatedCalorieBurn Int
-  userId      Int
-  user        User              @relation(fields: [userId], references: [id])
-  categories  WorkoutCategory[]
+  userId               Int
+  user                 User              @relation(fields: [userId], references: [id])
+  categories           WorkoutCategory[]
 }
 
 model WorkoutCategory {
-  id              Int        @id @default(autoincrement())
-  name            String     @unique
-  associated_user String // This is so that any category made by a user can be deleted by said user whether by choice or thru the deletion of their account
-  userId          Int
-  logs            WorkoutLog @relation(fields: [userId], references: [id])
+  id         Int              @id @default(autoincrement())
+  name       String           @unique
+  userId     Int
+  templateId Int?
+  user       User             @relation(fields: [userId], references: [id])
+  templates  WorkoutTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  logs       WorkoutLog[]
 }
 
 model FitnessGoal {
   id          Int        @id @default(autoincrement())
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  title       String
+  title       String     @unique
   description String
   completeBy  DateTime
   progress    Float      @default(0.0)
@@ -66,7 +83,7 @@ model FitnessGoal {
 
 model Exercises {
   id        Int     @id @default(autoincrement())
-  name      String
+  name      String  @unique
   type      String
   muscle    String
   equipment String

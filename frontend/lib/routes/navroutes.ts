@@ -14,7 +14,7 @@ export interface MakeNavLinksReturnT {
  *                   - "avatar-dropdown": Returns account-related and main function links for the avatar dropdown menu.
  * @returns An array of objects representing navigation links for the given navigation type.
  */
-export default function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropdown'): MakeNavLinksReturnT[] {
+export function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropdown'): MakeNavLinksReturnT[] {
     switch(nav_type) {
         case "primary":
             return [
@@ -24,7 +24,7 @@ export default function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avat
                 },
                 {
                     name: 'features',
-                    href: '#features-container'
+                    href: '/#features-container'
                 },
                 {
                     name: 'about',

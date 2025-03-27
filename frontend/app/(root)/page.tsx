@@ -7,7 +7,7 @@ import Link from "next/link"
 export const revalidate = 60;
 
 
-export default async function Home() {
+export default function Home() {
   return (
     <>
       <div className="py-16 md:pt-56 space-y-72">
@@ -19,25 +19,25 @@ export default async function Home() {
           </div>
           <div>
               <p className="font-medium text-center text-accent line-clamp-3 text-sm md:text-lg leading-snug md:leading-normal max-w-52 md:max-w-xl mx-auto">
-              Personalize your Workout tracking experience with
-              <span className="italic"> PowerPulse Fitness. </span>
-              Enables you to manage your goals and track your workouts, analyze your progress.
+                Personalize your Workout logging experience with
+                <span className="italic"> PowerPulse Fitness. </span>
+                Enables you to manage your goals and track your workouts, analyze your progress.
               </p>
           </div>
           <div>
             <div className="flex flex-row justify-center items-center md:justify-evenly gap-x-4 w-1/2 mx-auto">
               <div>
-              <Button
-              asChild
-                variant="secondary"
-                size="lg"
-              >
-                <Link
-                  href="/sign-up"
+                <Button
+                asChild
+                  variant="secondary"
+                  size="lg"
                 >
-                  Get Started
-                </Link>
-              </Button>
+                  <Link
+                    href="/sign-up"
+                  >
+                    Get Started
+                  </Link>
+                </Button>
               </div>
               <div>
                 <Button

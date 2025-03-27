@@ -1,6 +1,6 @@
 "use client";
 
-import make_nav_links from "@/lib/routes"
+import { make_nav_links } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 import {
     NavigationMenu,
@@ -46,7 +46,7 @@ export default function PrimaryNavBar() {
 
 
     const auth = {
-        isSignedIn: true
+        isSignedIn: false
     }
 
     return (
