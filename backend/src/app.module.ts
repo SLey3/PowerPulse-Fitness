@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { PrismaModule } from './prisma/prisma.module';
-import { NavlinksModule } from './navlinks/navlinks.module';
-import { NavlinkController } from './navlink/navlink.controller';
+import { ScheduleModule } from '@nestjs/schedule'
+import { JwtModule } from '@nestjs/jwt'
+import { PrismaModule } from './prisma/prisma.module'
+import { EmailModule } from './email/email.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -10,8 +12,13 @@ import { NavlinkController } from './navlink/navlink.controller';
     ConfigModule.forRoot({
       isGlobal: true
     }),
-    NavlinksModule
-  ],
-  controllers: [NavlinkController]
+    ScheduleModule.forRoot(),
+    JwtModule.register({ 
+      secret: process.env.JWT_SECRET!,
+      global: true
+    }),
+    EmailModule,
+    AuthModule,
+  ]
 })
 export class AppModule {}
