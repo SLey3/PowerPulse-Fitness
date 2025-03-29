@@ -1,23 +1,29 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron } from "@nestjs/schedule"
+import * as dayjs from 'dayjs'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class TasksService {
-    private prisma: PrismaService;
     private readonly logger = new Logger(TasksService.name);
 
-    @Cron('0 0 */2 * *')
+    constructor(private prisma: PrismaService) {}
+
+    @Cron('0 0 * * *') // Run daily at midnight
     async deleteUnverifiedAccounts() {
-        const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60**2 * 1000).toISOString();
+        const twoDaysAgoStart = dayjs().subtract(2, 'days').startOf('day').toISOString();
+        const twoDaysAgoEnd = dayjs().subtract(2, 'days').endOf('day').toISOString();
 
         const deleted = await this.prisma.user.deleteMany({
             where: {
                 isVerified: false,
-                createdAt: { lt: twoDaysAgo }
+                createdAt: { 
+                    gte: twoDaysAgoStart,
+                    lt: twoDaysAgoEnd
+                }
             },
         });
 
-        this.logger.log(`[CRON DELETE UNVERIFIED] today's deletion count: ${deleted.count}`);
+        this.logger.log(`[CRON DELETE UNVERIFIED] Deleted ${deleted.count} accounts created exactly two days ago`);
     }
 }

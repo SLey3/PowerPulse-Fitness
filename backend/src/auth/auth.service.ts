@@ -52,7 +52,8 @@ export class AuthService {
                     id: true,
                     firstName: true,
                     lastName: true,
-                    email: true
+                    email: true,
+                    role: true
                 }
             });
         } catch (error) {
@@ -154,6 +155,7 @@ export class AuthService {
                 firstName: true,
                 lastName: true,
                 email: true, 
+                role: true,
                 passwordHash: true
             },
             where: {
@@ -196,7 +198,7 @@ export class AuthService {
             return { verified: 'Account has been verified!' };
         } catch (error) {
             if (error?.name === 'TokenExpiredError') {
-                throw new BadRequestException("Token is expired!")
+                throw new BadRequestException("Token is expired!");
             } else if (error?.name === 'JsonWebTokenError') {
                 throw new BadRequestException(error?.message);
             }
