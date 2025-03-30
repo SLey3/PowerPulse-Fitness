@@ -25,6 +25,33 @@ export class AuthService {
             });
     }
 
+   async validateJwt(jwt: string): Promise<any> {
+        const jwt_secret = this.configService.get<string>("JWT_SECRET");
+
+        // verify token
+        try {
+            const res = await this.jwtService.verifyAsync(jwt, {
+                secret: jwt_secret,
+            });
+
+            return res;
+        } catch (error) {
+            if (error?.name === 'TokenExpiredError') {
+                throw new BadRequestException("Token is expired!", {
+                    cause: error,
+                    description: error?.name
+                });
+            } else if (error?.name === 'JsonWebTokenError') {
+                throw new BadRequestException(error?.message, {
+                    cause: error,
+                    description: error?.name
+                });
+            }
+
+            throw new Error(error.message);
+        }
+    }
+
     async signUp(dto: SignUpDto) {
         let user;
         const frontend_url = this.configService.get<string>("FRONTEND_URL")!;
@@ -176,34 +203,20 @@ export class AuthService {
     }
 
     async verifyUser(dto: VerifyUserDto) {
-        const jwt_secret = this.configService.get<string>("JWT_SECRET");
+        
+        const user_email = await this.validateJwt(dto.jwt);
 
-        // verify token
-        try {
-            const user_email = await this.jwtService.verifyAsync(dto.jwt, {
-                secret: jwt_secret,
-            });
+        const { email } = user_email;
 
-            const { email } = user_email;
-
-            await this.prisma.user.update({
-                where: {
-                    email: email
-                },
-                data: {
-                    isVerified: true
-                }
-            });
-
-            return { verified: 'Account has been verified!' };
-        } catch (error) {
-            if (error?.name === 'TokenExpiredError') {
-                throw new BadRequestException("Token is expired!");
-            } else if (error?.name === 'JsonWebTokenError') {
-                throw new BadRequestException(error?.message);
+        await this.prisma.user.update({
+            where: {
+                email: email
+            },
+            data: {
+                isVerified: true
             }
+        });
 
-            throw new Error(error.message);
-        }
+        return { verified: 'Account has been verified!' };
     }
 }

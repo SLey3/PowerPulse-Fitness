@@ -46,7 +46,7 @@ export default function PrimaryNavBar() {
 
 
     const auth = {
-        isSignedIn: false
+        isSignedIn: true
     }
 
     return (
@@ -60,13 +60,9 @@ export default function PrimaryNavBar() {
                                 whileTap={{ scale: 0.8 }}
                             >
 
-                                {link.name === 'sign in' ?  
-                                    auth.isSignedIn ? (
+                                {link.name === 'sign in' && auth.isSignedIn ? (
                                         <AvatarDropdownMenu img_url="/default-avatar.jpg" />
                                     ) : (
-                                        <DefaultNavLink name={link.name} href={link.href} pathname={pathname} />
-                                    ) 
-                                : (
                                     <DefaultNavLink name={link.name} href={link.href} pathname={pathname} />   
                                 )}
                             </motion.div>

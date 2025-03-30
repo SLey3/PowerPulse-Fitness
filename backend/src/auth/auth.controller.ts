@@ -18,6 +18,13 @@ export class AuthController {
     }
 
     @HttpCode(200)
+    @Post('validate-jwt')
+    async validateJwt(@Body() validateJwtDto: VerifyUserDto) {
+        // we use VerifyUserDto as validateJwt uses the same parameters as verifyUser
+        return this.authService.validateJwt(validateJwtDto.jwt);
+    }
+
+    @HttpCode(200)
     @Post('verify-user')
     async verifyUser(@Body() verifyUserDto: VerifyUserDto) {
         return this.authService.verifyUser(verifyUserDto);
