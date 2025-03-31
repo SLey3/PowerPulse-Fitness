@@ -46,7 +46,7 @@ export default function Home() {
                   size="sm"
                 >
                   <Link
-                    href="#features-container"
+                    href="/about"
                   >
                     Learn More
                   </Link>

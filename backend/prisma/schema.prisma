@@ -20,6 +20,7 @@ model User {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   weight            Float // will be stored in kg
+  unitPref          String            @default("kg") // User display calculations unit preference (how calculation results appear to the user in the frontend)
   workoutLogs       WorkoutLog[]
   workoutTemplates  WorkoutTemplate[]
   fitnessGoals      FitnessGoal[]

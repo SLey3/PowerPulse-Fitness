@@ -31,5 +31,7 @@ export class SignUpDto {
 
     @IsNotEmpty()
     weight: number;
-    weightUnit: 'lbs' | 'kg';
+
+    // this will always be set as in the signup form, display unit preference will have a default of 'kg'
+    unitPref: 'lbs' | 'kg';
 }

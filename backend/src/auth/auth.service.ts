@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import * as argon2 from 'argon2'
+import { lbs2kg, generateSignUpHtml } from 'src/utils'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { EmailService } from 'src/email/email.service'
 import { SignUpDto, SignInDto, VerifyUserDto } from './dto'
@@ -60,8 +61,8 @@ export class AuthService {
         const pwd = await argon2.hash(dto.password);
 
         // check weight is in kg if not convert it to kg from lbs
-        if (dto.weightUnit === 'lbs') {
-            dto.weight = dto.weight / 2.205 // formula to convert lbs --> kg: lbs/2.205 
+        if (dto.unitPref === 'lbs') {
+            dto.weight = lbs2kg(dto.weight);
         }
 
         // create and save new user to db
@@ -73,7 +74,8 @@ export class AuthService {
                     email: dto.email,
                     passwordHash: pwd,
                     phone: dto.phone,
-                    weight: dto.weight
+                    weight: dto.weight,
+                    unitPref: dto.unitPref
                 },
                 select: {
                     id: true,
@@ -86,80 +88,17 @@ export class AuthService {
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
-                    throw new ForbiddenException('User already Exists');
+                    throw new ForbiddenException('User Already Exists');
                 }
             }
             throw error;
         }
 
         // create jwt for verification email
-        const confirmation_token = await this.signJwt({'email': user.email}, 2 * 86_400); // 86_400 is the amount of seconds in 2 days
+        const confirmation_token = await this.signJwt({'email': user.email}, 2 * 86_400); // 2 * 86_400 is the amount of seconds in 2 days
 
         // create and send confirmation email
-        const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                }
-                .container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    padding: 20px;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
-                }
-                .header {
-                    background-color: #0066cc;
-                    color: white;
-                    padding: 10px;
-                    text-align: center;
-                    border-radius: 5px 5px 0 0;
-                }
-                .content {
-                    padding: 20px;
-                }
-                .button {
-                    display: inline-block;
-                    background-color: #0066cc;
-                    color: white;
-                    padding: 10px 20px;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    margin-top: 20px;
-                }
-                .footer {
-                    margin-top: 20px;
-                    font-size: 12px;
-                    color: #777;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h2>Welcome to PowerPulse Fitness!</h2>
-                </div>
-                <div class="content">
-                    <p>Hello ${user.firstName},</p>
-                    <p>Thank you for creating an account with PowerPulse Fitness!</p>
-                    <p>Please confirm your email address by clicking the button below:</p>
-                    <p><a class="button" href="${frontend_url}/auth/verify-email?token=${confirmation_token}">Verify Email</a></p>
-                    <p><strong>Important:</strong> This verification link will expire in 48 hours.</p>
-                    <p>If you did not create this account, please ignore this email.</p>
-                </div>
-                <div class="footer">
-                    <p>PowerPulse Fitness Team</p>
-                    <p>This is an automated message, please do not reply.</p>
-                </div>
-            </div>
-        </body>
-        </html>
-        `
+        const htmlContent = generateSignUpHtml(`${user.firstName} ${user.lastName}`, frontend_url, confirmation_token);
 
         await this.emailService.send(
             'Thank you for Creating an Account with Us',
@@ -168,7 +107,7 @@ export class AuthService {
             [{ name: `${user.firstName} ${user.lastName}`, email: user.email }]
         );
 
-        // encode and return complete user jwt to return to frontend
+        // encode and return complete user jwt to return to frontend to properly sign in user
         const userjwt = await this.signJwt(user, 10 * 86_400); // 10 * 86_400 is the amount of seconds in 10 days
 
         return {'access_token': userjwt};
