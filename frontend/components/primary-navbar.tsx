@@ -1,5 +1,9 @@
 "use client";
 
+import { useState, useEffect } from "react"
+import { motion } from 'motion/react'
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { make_nav_links } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 import {
@@ -9,12 +13,6 @@ import {
     NavigationMenuList,
 } from "./ui/navigation-menu"
 import AvatarDropdownMenu from "./avatar-dropdown";
-
-
-import { motion } from 'motion/react'
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-
 
 
 function DefaultNavLink({ name, href, pathname }: { name: string, href: string, pathname: string }) {
@@ -41,13 +39,14 @@ function DefaultNavLink({ name, href, pathname }: { name: string, href: string, 
 }
 
 export default function PrimaryNavBar() {
+    const [isSignedIn, setIsSignedIn] = useState<null | string>(null)
     const pathname = usePathname();
     const navlinks = make_nav_links("primary");
 
 
-    const auth = {
-        isSignedIn: true
-    }
+    useEffect(() => {
+        setIsSignedIn(localStorage.getItem("t"));
+    }, []);
 
     return (
         <>
@@ -60,7 +59,7 @@ export default function PrimaryNavBar() {
                                 whileTap={{ scale: 0.8 }}
                             >
 
-                                {link.name === 'sign in' && auth.isSignedIn ? (
+                                {link.name === 'sign in' && isSignedIn ? (
                                         <AvatarDropdownMenu img_url="/default-avatar.jpg" />
                                     ) : (
                                     <DefaultNavLink name={link.name} href={link.href} pathname={pathname} />   

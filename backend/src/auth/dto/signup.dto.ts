@@ -4,7 +4,8 @@ import {
     IsStrongPassword, 
     IsNotEmpty,
     IsOptional,
-    IsAlphanumeric
+    IsAlphanumeric,
+    IsPositive
 } from 'class-validator'
 
 export class SignUpDto {
@@ -24,12 +25,12 @@ export class SignUpDto {
     @IsStrongPassword()
     password: string;
 
-    @IsOptional()
-    @IsNotEmpty()
     @IsPhoneNumber()
+    @IsOptional()
     phone?: string;
 
     @IsNotEmpty()
+    @IsPositive()
     weight: number;
 
     // this will always be set as in the signup form, display unit preference will have a default of 'kg'

@@ -108,7 +108,7 @@ export class AuthService {
         );
 
         // encode and return complete user jwt to return to frontend to properly sign in user
-        const userjwt = await this.signJwt(user, 10 * 86_400); // 10 * 86_400 is the amount of seconds in 10 days
+        const userjwt = await this.signJwt(user, 2 * 86_400);
 
         return {'access_token': userjwt};
     }

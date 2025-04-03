@@ -1,20 +1,84 @@
+import { 
+    LayoutDashboard,
+    UserPen,
+    Logs,
+    BookOpen,
+    ChartPie,
+    House
+} from "lucide-react"
+
 export interface MakeNavLinksReturnT {
     name: string;
     href: string;
     cat?: 'account' | 'main_func'
 }
 
+export interface MakeDashLinksReturnT {
+    name: string;
+    href: string;
+    icon: typeof LayoutDashboard
+}
+
+
+export function make_dashboard_links(): MakeDashLinksReturnT[] {
+    return [
+        {
+            name: 'Edit Account',
+            href: '/acc/manage',
+            icon: UserPen
+        },
+        {
+            name: 'sep',
+            href: '#',
+            icon: BookOpen
+        },
+        {
+            name: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutDashboard
+        },
+        {
+            name: 'Fitness Logs',
+            href: '/fit/logs',
+            icon: Logs
+        },
+        {
+            name: 'Fitness Goals',
+            href: '/fit/goals',
+            icon: BookOpen
+        },
+        {
+            name: 'Fitness Analytics',
+            href: '/fit/analytics',
+            icon: ChartPie
+        },
+        {
+            name: 'sep',
+            href: '#',
+            icon: BookOpen
+        },
+        {
+            name: 'Sign Out',
+            href: '#',
+            icon: BookOpen
+        },
+        {
+            name: 'Back Home',
+            href: '/',
+            icon: House
+        }
+    ];
+}
 
 /**
  * Generates an array of navigation link objects based on the specified navigation type.
  *
  * @param nav_type - The type of navigation links to generate.
  *                   - "primary": Returns main navigation links used for the public site.
- *                   - "dashboard": Returns an empty array intended for dashboard links.
  *                   - "avatar-dropdown": Returns account-related and main function links for the avatar dropdown menu.
  * @returns An array of objects representing navigation links for the given navigation type.
  */
-export function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropdown'): MakeNavLinksReturnT[] {
+export function make_nav_links(nav_type: 'primary' | 'avatar-dropdown'): MakeNavLinksReturnT[] {
     switch(nav_type) {
         case "primary":
             return [
@@ -32,11 +96,9 @@ export function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropd
                 },
                 {
                     name: 'sign in',
-                    href: '/sign-in'
+                    href: '/auth'
                 }
             ];
-        case "dashboard":
-            return [];
         case "avatar-dropdown":
             return [
                 {
@@ -46,7 +108,7 @@ export function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropd
                 },
                 {
                     name: 'Dashboard',
-                    href: '/acc/dashboard',
+                    href: '/dashboard',
                     cat: 'account'
                 },
                 {
@@ -66,7 +128,7 @@ export function make_nav_links(nav_type: 'primary' | 'dashboard' | 'avatar-dropd
                 },
                 {
                     name: 'Sign Out',
-                    href: '/sign-out'
+                    href: '#'
                 }
             ]
     }

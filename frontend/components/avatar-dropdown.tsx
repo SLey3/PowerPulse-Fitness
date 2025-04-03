@@ -1,3 +1,5 @@
+import Link from "next/link"
+import React from "react"
 import { make_nav_links } from "@/lib/routes"
 import { filter_navlinks } from "@/lib/utils"
 import { Avatar, AvatarImage } from "./ui/avatar"
@@ -10,17 +12,21 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
-import Link from "next/link"
 
 
-function DropdownItem({href, name}:{href: string, name: string}) {
+function DropdownItem({href, name, onClick=() => {}}:{href: string, name: string, onClick?: React.MouseEventHandler}) {
     return (
         <>
-            <Link href={href}>
+            <Link href={href} onClick={onClick}>
                 <DropdownMenuItem>{name}</DropdownMenuItem>
             </Link>
         </>
     );
+}
+
+const onSignOut = () => {
+    localStorage.removeItem("t");
+    location.reload();
 }
 
 
@@ -53,7 +59,7 @@ export default function AvatarDropdownMenu({img_url}: {img_url: string}) {
                         ))}
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
-                    <DropdownItem href={signOut!.href} name={signOut!.name} />
+                    <DropdownItem onClick={onSignOut} href={signOut!.href} name={signOut!.name} />
                 </DropdownMenuContent>
             </DropdownMenu>
         </>
