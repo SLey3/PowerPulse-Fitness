@@ -46,10 +46,8 @@ model WorkoutLog {
   id                   Int               @id @default(autoincrement())
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
+  title                String            @unique
   description          String
-  // sets        Int
-  // reps        Int   This will be in the routine json object including a routine name field
-  // weight      Float
   routine              Json              @db.JsonB
   duration             Int
   notes                String?
@@ -85,11 +83,13 @@ model FitnessGoal {
 
 model Exercises {
   id        Int     @id @default(autoincrement())
-  name      String  @unique
+  name      String  
   type      String
   muscle    String
   equipment String
   notes     String?
+  useCount  Int     @default(0)
+  met       Int
   userId    Int
   user      User    @relation(fields: [userId], references: [id])
 }

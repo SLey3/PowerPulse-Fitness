@@ -29,6 +29,8 @@ ChartJS.register(
     Legend
 );
 
+export const experimental_ppr = true;
+
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState('overview');
 

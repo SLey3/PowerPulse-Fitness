@@ -1,7 +1,9 @@
-# compiled output
+# compiled and generated output
 /dist
 /node_modules
 /build
+/scripts/*.js
+/src/compendium/data/compendium.csv
 
 # Logs
 logs

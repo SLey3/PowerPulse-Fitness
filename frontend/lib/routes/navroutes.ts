@@ -4,7 +4,9 @@ import {
     Logs,
     BookOpen,
     ChartPie,
-    House
+    House,
+    List,
+    Dumbbell
 } from "lucide-react"
 
 export interface MakeNavLinksReturnT {
@@ -28,14 +30,24 @@ export function make_dashboard_links(): MakeDashLinksReturnT[] {
             icon: UserPen
         },
         {
+            name: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutDashboard
+        },
+        {
             name: 'sep',
             href: '#',
             icon: BookOpen
         },
         {
-            name: 'Dashboard',
-            href: '/dashboard',
-            icon: LayoutDashboard
+            name: 'Exercises',
+            href: '/fit/exercises',
+            icon: Dumbbell
+        },
+        {
+            name: 'Exercise Categories',
+            href: '/fit/exercises/cat',
+            icon: List
         },
         {
             name: 'Fitness Logs',

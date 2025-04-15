@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import * as argon2 from 'argon2'
 import { lbs2kg, generateSignUpHtml } from 'src/utils'
-import { PrismaService } from 'src/prisma/prisma.service'
+import { PrismaService } from 'src/prisma_m/prisma.service'
 import { EmailService } from 'src/email/email.service'
 import { SignUpDto, SignInDto, VerifyUserDto } from './dto'
 
@@ -91,7 +91,8 @@ export class AuthService {
                     throw new ForbiddenException('User Already Exists');
                 }
             }
-            throw error;
+
+            throw new Error(error);
         }
 
         // create jwt for verification email
@@ -122,7 +123,7 @@ export class AuthService {
                 lastName: true,
                 email: true, 
                 role: true,
-                passwordHash: true
+                passwordHash: true,
             },
             where: {
                 email: dto.email

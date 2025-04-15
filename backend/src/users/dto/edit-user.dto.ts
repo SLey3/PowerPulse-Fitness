@@ -7,8 +7,6 @@ import {
 } from 'class-validator'
 
 export class EditUserDto {
-    // mandatory to identify user
-    id: number;
 
     @IsOptional()
     @IsAlphanumeric()

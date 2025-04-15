@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import type { INestApplication } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
-import type { PrismaService } from 'src/prisma/prisma.service';
+import type { PrismaService } from 'src/prisma_m/prisma.service';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaService } from 'src/prisma/prisma.service'
+import * as argon2 from 'argon2'
+import { formatDto } from 'src/utils'
+import { PrismaService } from 'src/prisma_m/prisma.service'
 import { EditUserDto } from './dto'
 
 @Injectable()
@@ -12,13 +14,9 @@ export class UsersService {
             expiresIn: 10 * 86_400 // 10 * 86_400 is the amount of seconds in 10 days
         });
     }
-
-    findall(): Promise<object[]> {
-      return this.prisma.user.findMany();
-    }
   
     async findOne(email: string): Promise<object> {
-      const user = await this.prisma.user.findUnique({        
+      const user = await this.prisma.user.findUnique({      
         where: {
           email: email
         }
@@ -32,20 +30,21 @@ export class UsersService {
       return cleanedUser;
     }
 
-    async editUser(editUserDto: EditUserDto) {
+    async editUser(editUserDto: EditUserDto, userId: number) {
         // first filter fields to only those that where inputted by user and check if there is any fields that were inputted
-        const filteredFields = Object.entries(editUserDto)
-          .filter(([_, val]) => typeof val !== 'undefined' && val !== null)
-          .reduce((acc, [key, val]) => ({ ...acc, [key]: val }), {}) as EditUserDto;
+        const filteredFields = formatDto<EditUserDto>(editUserDto);
 
-        if (Object.keys(editUserDto).length === 0) throw new BadRequestException("No Fields to Edit");
+        if (Object.keys(filteredFields).length === 0) throw new BadRequestException("No Fields to Edit");
 
-        // then use the filter fields to update the user selected by the id
-        const {id, ...updateFields} = filteredFields;
+        // check for password
+        if (filteredFields.password) {
+            filteredFields.password = await argon2.hash(filteredFields.password);
+        }
 
+        // push to db
         const user = await this.prisma.user.update({
-          where: {id: id},
-          data: updateFields,
+          where: {id: userId},
+          data: filteredFields,
           select: {
             id: true,
             firstName: true,
@@ -62,16 +61,16 @@ export class UsersService {
 
     }
 
-    async deleteUser(email: string) {
-        const user = await this.prisma.user.delete({
+    async deleteUser(_email: string) {
+        const { email } = await this.prisma.user.delete({
             select: {
                 email: true
             },
             where: {
-                email: email
+                email: _email
             }
         });
 
-        return {"confirmation": `Account with email of ${user.email} is now deleted`}
+        return {"confirmation": `Account with email of ${email} is now deleted`};
     }
 }

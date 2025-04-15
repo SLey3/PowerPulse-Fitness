@@ -3,6 +3,13 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "assets": [
+      {
+        "include": "compendium/data/2024_Adult_Compendium_MET.csv",
+        "outDir": "dist/src",
+        "watchAssets": true
+      }
+    ]
   }
 }
