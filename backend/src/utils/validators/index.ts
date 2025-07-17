@@ -1,2 +1,2 @@
-export * from './contains';
-export * from './eitheror';
+export * from './contains'
+export * from './eitheror'

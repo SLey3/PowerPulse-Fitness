@@ -22,12 +22,12 @@ export function Contains(allowedValues: Promise<string[]>, validationOptions?: V
             options: validationOptions,
             validator: {
                 async validate(value: any, args: ValidationArguments) {
-                    const [allowedValues] = args.constraints;
-                    const resolvedArr: string[] = await allowedValues;
+                    const [allowedValues] = args.constraints
+                    const resolvedArr: string[] = await allowedValues
 
-                    return typeof value === 'string' && resolvedArr.includes(value);
+                    return typeof value === 'string' && resolvedArr.includes(value)
                 }
             }
-        });
-    };
+        })
+    }
 }

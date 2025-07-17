@@ -6,5 +6,5 @@ import {
 export class FindOneDeleteDto {
     @IsEmail()
     @IsNotEmpty()
-    email: string;
+    email: string
 }

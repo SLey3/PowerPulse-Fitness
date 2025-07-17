@@ -1,31 +1,31 @@
-import HomeShowcase from "@/components/home-showcase";
+import HomeShowcase from "@/components/home-showcase"
 import { Button } from "@/components/ui/button"
 
 import Image from "next/image"
 import Link from "next/link"
 
-export const revalidate = 60;
+export const revalidate = 60
 
 
 export default function Home() {
   return (
     <>
       <div className="py-16 md:pt-56 space-y-72">
-        <div className="w-screen flex flex-col gap-y-10">
+        <div className="flex flex-col w-screen gap-y-10">
           <div>
-              <h1 className="font-bold text-xl md:text-4xl lg:text-6xl xl:text-8xl tracking-widest text-center">
+              <h1 className="text-xl font-bold tracking-widest text-center md:text-4xl lg:text-6xl xl:text-8xl">
                 Your <span className="italic">Fitness</span> Tracker
               </h1>
           </div>
           <div>
-              <p className="font-medium text-center text-accent line-clamp-3 text-sm md:text-lg leading-snug md:leading-normal max-w-52 md:max-w-xl mx-auto">
+              <p className="mx-auto text-sm font-medium leading-snug text-center text-accent line-clamp-3 md:text-lg md:leading-normal max-w-52 md:max-w-xl">
                 Personalize your Workout logging experience with
                 <span className="italic"> PowerPulse Fitness. </span>
                 Enables you to manage your goals and track your workouts, analyze your progress.
               </p>
           </div>
           <div>
-            <div className="flex flex-row justify-center items-center md:justify-evenly gap-x-4 w-1/2 mx-auto">
+            <div className="flex flex-row items-center justify-center w-1/2 mx-auto md:justify-evenly gap-x-4">
               <div>
                 <Button
                 asChild
@@ -55,13 +55,13 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div id="features-container" className="w-full space-y-44 px-10">
+        <div id="features-container" className="w-full px-10 space-y-44">
           <HomeShowcase
             c1={
               <>
                 <div className="grid grid-rows-3 gap-y-7 md:gap-y-7">
                   <div>
-                    <h2 className="font-semibold text-2xl pt-2">
+                    <h2 className="pt-2 text-2xl font-semibold">
                       Workout Logs
                     </h2>
                   </div>
@@ -89,7 +89,7 @@ export default function Home() {
             c2={
               <>
                   <Image
-                    className="size-full object-contain"
+                    className="object-contain size-full"
                     draggable={false}
                     src="/home-placeholder.png"
                     alt="placeholder"
@@ -103,7 +103,7 @@ export default function Home() {
             c1={
               <>
                   <Image
-                    className="size-full object-contain"
+                    className="object-contain size-full"
                     draggable={false}
                     src="/home-placeholder.png"
                     alt="placeholder"
@@ -116,7 +116,7 @@ export default function Home() {
               <>
                 <div className="grid grid-rows-3 gap-y-7 md:gap-y-7">
                   <div>
-                    <h2 className="font-semibold text-2xl pt-2">
+                    <h2 className="pt-2 text-2xl font-semibold">
                       <span className="italic">Fitness</span> Goals
                     </h2>
                   </div>
@@ -148,7 +148,7 @@ export default function Home() {
               <>
                 <div className="grid grid-rows-3 gap-y-7 md:gap-y-7">
                   <div>
-                    <h2 className="font-semibold text-2xl pt-2">
+                    <h2 className="pt-2 text-2xl font-semibold">
                       Workout Analytics
                     </h2>
                   </div>
@@ -177,7 +177,7 @@ export default function Home() {
             c2={
               <>
                   <Image
-                    className="size-full object-contain"
+                    className="object-contain size-full"
                     draggable={false}
                     src="/showcase-analytics.png"
                     alt="Analytics Home Showcase"
@@ -190,5 +190,5 @@ export default function Home() {
         </div>
       </div>
     </>
-  );
+  )
 }

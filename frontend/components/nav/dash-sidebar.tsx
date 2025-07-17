@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import Cookies from "js-cookie"
 import { make_dashboard_links } from "@/lib/routes"
 import {
     Sidebar,
@@ -10,18 +11,18 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "./ui/sidebar"
+} from "../ui/sidebar"
 
 
 
 export function UserDashboard() {
-    const router = useRouter();
-    const navlinks = make_dashboard_links();
+    const router = useRouter()
+    const navlinks = make_dashboard_links()
 
 
     const onSignOut = () => {
-        localStorage.removeItem("t");
-        router.push("/");
+        Cookies.remove('t')
+        router.push("/")
     }
 
     return (
@@ -34,7 +35,8 @@ export function UserDashboard() {
                         } else if (link.name === 'Sign Out') {
                             return (
                                 <SidebarMenuItem key={i}>
-                                    <SidebarMenuButton onClick={onSignOut}>
+                                    <SidebarMenuButton onClick={onSignOut} className="cursor-pointer">
+                                        <link.icon />
                                         {link.name}
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>

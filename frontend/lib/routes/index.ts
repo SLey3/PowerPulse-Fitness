@@ -1,1 +1,1 @@
-export * from './navroutes';
+export * from './navroutes'

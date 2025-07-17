@@ -12,7 +12,7 @@ export class UsersService {
     private signAuthToken(payload: {id: number, firstName: string, lastName: string, email: string, role: string}): Promise<string> {
         return this.jwtService.signAsync(payload, {
             expiresIn: 10 * 86_400 // 10 * 86_400 is the amount of seconds in 10 days
-        });
+        })
     }
   
     async findOne(email: string): Promise<object> {
@@ -20,25 +20,25 @@ export class UsersService {
         where: {
           email: email
         }
-      });
+      })
   
-      if (!user) throw new NotFoundException("Requested user could not be found");
+      if (!user) throw new NotFoundException("Requested user could not be found")
 
       // Make sure we exclude the password and any other fields we do not wish to send in the response
-      const { passwordHash, isVerified, ...cleanedUser } = user;
+      const { passwordHash, isVerified, ...cleanedUser } = user
   
-      return cleanedUser;
+      return cleanedUser
     }
 
     async editUser(editUserDto: EditUserDto, userId: number) {
         // first filter fields to only those that where inputted by user and check if there is any fields that were inputted
-        const filteredFields = formatDto<EditUserDto>(editUserDto);
+        const filteredFields = formatDto<EditUserDto>(editUserDto)
 
-        if (Object.keys(filteredFields).length === 0) throw new BadRequestException("No Fields to Edit");
+        if (Object.keys(filteredFields).length === 0) throw new BadRequestException("No Fields to Edit")
 
         // check for password
         if (filteredFields.password) {
-            filteredFields.password = await argon2.hash(filteredFields.password);
+            filteredFields.password = await argon2.hash(filteredFields.password)
         }
 
         // push to db
@@ -52,12 +52,12 @@ export class UsersService {
             email: true, 
             role: true,
           }
-        });
+        })
 
         // create and return updated authorization token
-        const new_token = this.signAuthToken(user);
+        const new_token = this.signAuthToken(user)
 
-        return { "updatedToken": new_token };
+        return { "updatedToken": new_token }
 
     }
 
@@ -69,8 +69,8 @@ export class UsersService {
             where: {
                 email: _email
             }
-        });
+        })
 
-        return {"confirmation": `Account with email of ${email} is now deleted`};
+        return {"confirmation": `Account with email of ${email} is now deleted`}
     }
 }

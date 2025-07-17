@@ -62,5 +62,5 @@ export function generateSignUpHtml(name: string, frontend_url: string, confirmat
             </div>
         </body>
         </html>
-        `;
+        `
 }

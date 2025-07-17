@@ -1,8 +1,8 @@
-"use client";
-import { useState } from 'react';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+"use client"
+import { useState } from 'react'
+import { Line, Bar, Doughnut } from 'react-chartjs-2'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
     Chart as ChartJS, 
     CategoryScale, 
@@ -14,7 +14,7 @@ import {
     Tooltip, 
     Legend, 
     ArcElement 
-} from 'chart.js';
+} from 'chart.js'
 
 // Register ChartJS components
 ChartJS.register(
@@ -27,12 +27,12 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend
-);
+)
 
-export const experimental_ppr = true;
+export const experimental_ppr = true
 
 export default function Dashboard() {
-    const [activeTab, setActiveTab] = useState('overview');
+    const [activeTab, setActiveTab] = useState('overview')
 
     // Mock data for the charts
     const workoutData = {
@@ -45,7 +45,7 @@ export default function Dashboard() {
                 backgroundColor: 'rgba(53, 162, 235, 0.5)',
             },
         ],
-    };
+    }
 
     const caloriesData = {
         labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -56,7 +56,7 @@ export default function Dashboard() {
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
             },
         ],
-    };
+    }
 
     const workoutTypesData = {
         labels: ['Cardio', 'Strength', 'Flexibility', 'Balance', 'HIIT'],
@@ -81,13 +81,13 @@ export default function Dashboard() {
                 borderWidth: 1,
             },
         ],
-    };
+    }
 
     return (
-        <div className="container mx-auto py-8 px-4">
-            <h1 className="text-3xl font-bold mb-6">Fitness Dashboard</h1>
+        <div className="container px-4 py-8 mx-auto">
+            <h1 className="mb-6 text-3xl font-bold">Fitness Dashboard</h1>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
                 <Card>
                     <CardContent className="pt-6">
                         <div className="text-2xl font-bold">1,240</div>
@@ -116,7 +116,7 @@ export default function Dashboard() {
                 </TabsList>
                 
                 <TabsContent value="overview">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Weekly Workout Duration</CardTitle>
@@ -152,15 +152,15 @@ export default function Dashboard() {
                             </CardHeader>
                             <CardContent>
                                 <ul className="space-y-2">
-                                    <li className="p-3 bg-muted rounded-md flex justify-between">
+                                    <li className="flex justify-between p-3 rounded-md bg-muted">
                                         <span>Upper Body Strength</span>
                                         <span>45 mins · 320 calories</span>
                                     </li>
-                                    <li className="p-3 bg-muted rounded-md flex justify-between">
+                                    <li className="flex justify-between p-3 rounded-md bg-muted">
                                         <span>HIIT Session</span>
                                         <span>30 mins · 380 calories</span>
                                     </li>
-                                    <li className="p-3 bg-muted rounded-md flex justify-between">
+                                    <li className="flex justify-between p-3 rounded-md bg-muted">
                                         <span>Cardio Training</span>
                                         <span>60 mins · 450 calories</span>
                                     </li>
@@ -171,7 +171,7 @@ export default function Dashboard() {
                 </TabsContent>
                 
                 <TabsContent value="nutrition">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Card>
                             <CardHeader>
                                 <CardTitle>Macronutrient Breakdown</CardTitle>
@@ -227,30 +227,30 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        <div className="flex justify-between items-center p-4 border rounded-md">
+                        <div className="flex items-center justify-between p-4 border rounded-md">
                             <div>
                                 <h3 className="font-medium">Lower Body Strength</h3>
                                 <p className="text-sm text-muted-foreground">Tomorrow, 6:00 PM</p>
                             </div>
-                            <button className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm">
+                            <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground">
                                 Start
                             </button>
                         </div>
-                        <div className="flex justify-between items-center p-4 border rounded-md">
+                        <div className="flex items-center justify-between p-4 border rounded-md">
                             <div>
                                 <h3 className="font-medium">Yoga Flow</h3>
                                 <p className="text-sm text-muted-foreground">Wednesday, 7:30 AM</p>
                             </div>
-                            <button className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm">
+                            <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground">
                                 Start
                             </button>
                         </div>
-                        <div className="flex justify-between items-center p-4 border rounded-md">
+                        <div className="flex items-center justify-between p-4 border rounded-md">
                             <div>
                                 <h3 className="font-medium">Cardio Session</h3>
                                 <p className="text-sm text-muted-foreground">Friday, 5:30 PM</p>
                             </div>
-                            <button className="bg-primary text-primary-foreground px-3 py-1 rounded-md text-sm">
+                            <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground">
                                 Start
                             </button>
                         </div>
@@ -258,5 +258,5 @@ export default function Dashboard() {
                 </CardContent>
             </Card>
         </div>
-    );
+    )
 }

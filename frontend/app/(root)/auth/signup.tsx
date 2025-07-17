@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Cookies from "js-cookie"
 import { useForm } from "react-hook-form"
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,18 +58,18 @@ const formSchema = z.object({
 }).refine((data) => data.password === data.confirmPwd, {
     message: "Passwords must match",
         path: ["confirmPwd"]
-});
+})
 
 interface FormErr {
-    message: string[] | string;
-    error: string;
-    statusCode: number;
+    message: string[] | string
+    error: string
+    statusCode: number
 }
 
 export default function SignUpForm() {
-    const [page, setPage] = useState(1);
-    const [masterErrors, setMasterErrors] = useState<string[] | null>(null);
-    const router = useRouter();
+    const [page, setPage] = useState(1)
+    const [masterErrors, setMasterErrors] = useState<string[] | null>(null)
+    const router = useRouter()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -81,47 +82,50 @@ export default function SignUpForm() {
             weight: 0,
             unitPref: "lbs"
         }
-    });
+    })
 
 
     const onPage1Next = async () => {
-        const fn_valid = await form.trigger("firstName");
-        const ln_valid = await form.trigger("lastName");
+        const fn_valid = await form.trigger("firstName")
+        const ln_valid = await form.trigger("lastName")
 
-        if (fn_valid && ln_valid) setPage((next) => next + 1);
-    };
+        if (fn_valid && ln_valid) setPage((next) => next + 1)
+    }
 
     const onPage2Next = async () => {
-        const email_valid = await form.trigger("email");
-        const pwd_valid = await form.trigger("password");
-        const confirmPwd_valid = await form.trigger("confirmPwd");
+        const email_valid = await form.trigger("email")
+        const pwd_valid = await form.trigger("password")
+        const confirmPwd_valid = await form.trigger("confirmPwd")
 
-        if (email_valid && pwd_valid && confirmPwd_valid) setPage((next) => next + 1);
+        if (email_valid && pwd_valid && confirmPwd_valid) setPage((next) => next + 1)
     }
 
     const onBack = () => {
-        setPage((prev) => prev - 1);
+        setPage((prev) => prev - 1)
     }
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        if (values.phone === "") delete values.phone;
+        if (values.phone === "") delete values.phone
 
         axios.post("/api/auth/signup", values)
         .then((res: AxiosResponse<{"access_token": string}>) => {
-            localStorage.setItem("t", res.data.access_token);
-            router.push("/dashboard");
+            Cookies.set('t', res.data.access_token, {
+                expires: 10 * 86_400,
+                sameSite: 'Strict'
+            })
+            router.push("/dashboard")
         })
         .catch((err: AxiosError<FormErr>) => {
-            let res = err.response?.data!;
+            let res = err.response?.data!
 
-            console.log(err);
+            console.log(err)
 
             if (res.statusCode === 403) { // user exists error in this case
-                setMasterErrors([res.message as string]);
+                setMasterErrors([res.message as string])
             } else {
-                setMasterErrors(res.message as string[]);
+                setMasterErrors(res.message as string[])
             }
-        });
+        })
     }
 
     return (
@@ -131,7 +135,7 @@ export default function SignUpForm() {
                     <CardTitle>Sign Up</CardTitle>
                     <CardDescription>Create your account with PowerPulse Fitness</CardDescription>
                     <div className={`${masterErrors ? 'block' : 'hidden'} py-3 bg-red-300/40 rounded-md text-destructive text-sm w-full`}>
-                        <ul className="list-decimal list-inside space-y-px">
+                        <ul className="space-y-px list-decimal list-inside">
                             {masterErrors?.map((err, i) => (
                                 <li key={i}>{err}</li>
                             ))}
@@ -174,7 +178,7 @@ export default function SignUpForm() {
                                 <Button 
                                     type="button" 
                                     onClick={onPage1Next} 
-                                    className="cursor-pointer w-full mt-4" 
+                                    className="w-full mt-4 cursor-pointer" 
                                     variant="secondary"
                                 >
                                     Next
@@ -226,8 +230,10 @@ export default function SignUpForm() {
                                         </FormItem>
                                     )}
                                 />
-                                <Button type="button" onClick={onPage2Next} variant="secondary" className="cursor-pointer w-full">Next</Button>
-                                <Button type="button" onClick={onBack} variant="outline" className="cursor-pointer w-1/2">Back</Button>
+                                <Button type="button" onClick={onPage2Next} variant="secondary" className="w-full cursor-pointer">Next</Button>
+                                <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
+                                    Back
+                                </Button>
                             </div>
                             <div
                                 id="pg-3"
@@ -253,7 +259,7 @@ export default function SignUpForm() {
                                         <FormItem>
                                             <FormLabel>Weight <span className="text-red-500">*</span></FormLabel>
                                             <FormControl>
-                                                <div className="w-full flex flex-row content-center">
+                                                <div className="flex flex-row content-center w-full">
                                                     <div>
                                                         <Input type="number" placeholder="Enter your weight..."  {...field}  />
                                                     </div>
@@ -284,7 +290,7 @@ export default function SignUpForm() {
                                         </FormItem>
                                     )}
                                 />
-                                <div className="py-px flex flex-col items-start">
+                                <div className="flex flex-col items-start py-px">
                                     <div>
                                         <div className="flex items-center space-x-2">
                                             <Checkbox id="conf-terms" required />
@@ -297,13 +303,15 @@ export default function SignUpForm() {
                                         </div>
                                     </div>
                                 </div>
-                                <Button type="submit" className="cursor-pointer w-full">Sign Up</Button>
-                                <Button type="button" onClick={onBack} variant="outline" className="cursor-pointer w-1/2">Back</Button>
+                                <Button type="submit" className="w-full cursor-pointer">Sign Up</Button>
+                                <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
+                                    Back
+                                </Button>
                             </div>
                         </form>
                     </Form>
                 </CardContent>
             </Card>
         </>
-    );
+    )
 }

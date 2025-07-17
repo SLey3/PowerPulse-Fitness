@@ -89,7 +89,7 @@ model Exercises {
   equipment String
   notes     String?
   useCount  Int     @default(0)
-  met       Int
+  met       String
   userId    Int
   user      User    @relation(fields: [userId], references: [id])
 }

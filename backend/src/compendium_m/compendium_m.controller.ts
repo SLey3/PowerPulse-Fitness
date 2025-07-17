@@ -7,22 +7,22 @@ export class CompendiumMController {
 
     @Get()
     findAll() {
-        return this.comendiumMService.findAll();
+        return this.comendiumMService.findAll()
     }
 
     @Get('types')
     findTypes() {
-        return this.comendiumMService.findTypes();
+        return this.comendiumMService.findTypes()
     }
 
     @Get('names')
     findNames() {
-        return this.comendiumMService.findNames();
+        return this.comendiumMService.findNames()
     }
 
     @Get('met')
     findMET(@Query('type') type: string, @Query('name') name: string) {
-        return this.comendiumMService.findMET(type, name);
+        return this.comendiumMService.findMET(type, name)
     }
 
 }

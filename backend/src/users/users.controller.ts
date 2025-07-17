@@ -19,18 +19,18 @@ export class UsersController {
     @UseGuards(AuthGuard)
     @Get('singular')
     findOne(@Param() email: FindOneDeleteDto) {
-        return this.usersService.findOne(email.email);
+        return this.usersService.findOne(email.email)
     }
 
     @UseGuards(AuthGuard)
     @Patch('edit')
     editUser(@Body() editUserDto: EditUserDto, @GetUser('id') userId: number) {
-        return this.usersService.editUser(editUserDto, userId);
+        return this.usersService.editUser(editUserDto, userId)
     }
 
     @UseGuards(AuthGuard)
     @Delete('del')
     deleteUser(@Body() deleteDto: FindOneDeleteDto) {
-        return this.usersService.deleteUser(deleteDto.email);
+        return this.usersService.deleteUser(deleteDto.email)
     }
 }

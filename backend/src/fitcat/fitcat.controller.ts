@@ -20,36 +20,36 @@ export class FitcatController {
     @UseGuards(AuthGuard)
     @Get()
     findAll(@GetUser() user: any) {
-        return this.fitcatService.findAll(user.id);
+        return this.fitcatService.findAll(user.id)
     }
 
     @UseGuards(AuthGuard)
     @Get(":name")
     findOne(@Param('name') name: string, @GetUser('id') userId: number) {
-        return this.fitcatService.findOne(userId, name);
+        return this.fitcatService.findOne(userId, name)
     }
 
     @UseGuards(AuthGuard)
     @Post("add")
     createCat(@Body() catDto: CategoryDto) {
-        return this.fitcatService.createCat(catDto);
+        return this.fitcatService.createCat(catDto)
     }
 
     @UseGuards(AuthGuard)
     @Patch("edit")
     updateCat(@Body() updateCatDto: UpdateCategoryDto, @GetUser('id') userId: number) {
-        return this.fitcatService.updateCat(updateCatDto, userId);
+        return this.fitcatService.updateCat(updateCatDto, userId)
     }
 
     @UseGuards(AuthGuard)
     @Delete(':name')
     deleteCat(@Param('name') name: string, @GetUser('id') userId: number) {
-        return this.fitcatService.deleteCat(name, userId);
+        return this.fitcatService.deleteCat(name, userId)
     }
 
     @UseGuards(AuthGuard)
     @Delete('all')
     deleteAllCat(@GetUser('id') userId: number) {
-        return this.fitcatService.deleteAll(userId);
+        return this.fitcatService.deleteAll(userId)
     }
 }

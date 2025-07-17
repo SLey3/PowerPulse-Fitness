@@ -6,18 +6,19 @@ import {
     ChartPie,
     House,
     List,
+    LogOut,
     Dumbbell
 } from "lucide-react"
 
 export interface MakeNavLinksReturnT {
-    name: string;
-    href: string;
+    name: string
+    href: string
     cat?: 'account' | 'main_func'
 }
 
 export interface MakeDashLinksReturnT {
-    name: string;
-    href: string;
+    name: string
+    href: string
     icon: typeof LayoutDashboard
 }
 
@@ -72,14 +73,14 @@ export function make_dashboard_links(): MakeDashLinksReturnT[] {
         {
             name: 'Sign Out',
             href: '#',
-            icon: BookOpen
+            icon: LogOut
         },
         {
             name: 'Back Home',
             href: '/',
             icon: House
         }
-    ];
+    ]
 }
 
 /**
@@ -110,7 +111,7 @@ export function make_nav_links(nav_type: 'primary' | 'avatar-dropdown'): MakeNav
                     name: 'sign in',
                     href: '/auth'
                 }
-            ];
+            ]
         case "avatar-dropdown":
             return [
                 {

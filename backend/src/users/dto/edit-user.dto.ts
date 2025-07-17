@@ -10,28 +10,28 @@ export class EditUserDto {
 
     @IsOptional()
     @IsAlphanumeric()
-    firstName?: string;
+    firstName?: string
 
     @IsOptional()
     @IsAlphanumeric()
-    lastName?: string;
+    lastName?: string
 
     @IsOptional()
     @IsEmail()
-    email?: string;
+    email?: string
 
     @IsOptional()
     @IsStrongPassword()
-    password?: string;
+    password?: string
 
     @IsOptional()
     @IsOptional()
     @IsPhoneNumber()
-    phone?: string;
+    phone?: string
 
     @IsOptional()
-    weight?: number;
+    weight?: number
 
     @IsOptional()
-    unitPref?: 'lbs' | 'kg';
+    unitPref?: 'lbs' | 'kg'
 }

@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Cookies from "js-cookie"
 import React from "react"
 import { make_nav_links } from "@/lib/routes"
 import { filter_navlinks } from "@/lib/utils"
@@ -21,20 +22,20 @@ function DropdownItem({href, name, onClick=() => {}}:{href: string, name: string
                 <DropdownMenuItem>{name}</DropdownMenuItem>
             </Link>
         </>
-    );
+    )
 }
 
 const onSignOut = () => {
-    localStorage.removeItem("t");
-    location.reload();
+    Cookies.remove('t')
+    location.reload()
 }
 
 
 export default function AvatarDropdownMenu({img_url}: {img_url: string}) {
-    const navlinks = make_nav_links("avatar-dropdown");
-    const acc_links = filter_navlinks(navlinks, 'account');
+    const navlinks = make_nav_links("avatar-dropdown")
+    const acc_links = filter_navlinks(navlinks, 'account')
     const fit_links = filter_navlinks(navlinks, 'main_func')
-    const signOut = navlinks.find(link => link.name === 'Sign Out');
+    const signOut = navlinks.find(link => link.name === 'Sign Out')
 
     return (
         <>

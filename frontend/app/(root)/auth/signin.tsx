@@ -1,8 +1,9 @@
-"use client";
+"use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import Cookies from "js-cookie"
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios, { type AxiosResponse, type AxiosError} from 'axios'
@@ -32,57 +33,60 @@ const formSchema = z.object({
     password: z.string()
                 .min(5, "Password must contain at least 5 characters")
                 .max(95, "Password must contain at most 95 characters")
-});
+})
 
 
 interface FormErr {
-    message: string[] | string;
-    error: string;
-    statusCode: number;
+    message: string[] | string
+    error: string
+    statusCode: number
 }
 
 
 export default function SignInForm() {
-    const [masterError, setMasterError] = useState<null | string>(null);
-    const [emailFormErr, setEmailFormErr] = useState<null | string | string[]>(null);
-    const [pwdFormErr, setPwdFormErr] = useState<null | string | string[]>(null);
-    const router = useRouter();
+    const [masterError, setMasterError] = useState<null | string>(null)
+    const [emailFormErr, setEmailFormErr] = useState<null | string | string[]>(null)
+    const [pwdFormErr, setPwdFormErr] = useState<null | string | string[]>(null)
+    const router = useRouter()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
             password: ""
         }
-    });
+    })
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         axios.post("/api/auth/signin", values)
         .then((res: AxiosResponse<{access_token: string}>) => {
-            localStorage.setItem("t", res.data.access_token);
-            router.push("/dashboard");
+            Cookies.set('t', res.data.access_token, {
+                expires: 10 * 86_400,
+                sameSite: 'Strict'
+            })
+            router.push("/dashboard")
         })
         .catch((err: AxiosError<FormErr>) => {
-            const message = err.response?.data.message;
+            const message = err.response?.data.message
 
             if (typeof message === 'undefined') {
-                console.error(err.response?.data);
+                console.error(err.response?.data)
                 setMasterError("Something went wrong. Check Console.")
-                return; // in this case simply log the error response data, set the master error and just return
+                return // in this case simply log the error response data, set the master error and just return
             }
 
             if (typeof message === 'string' && message.startsWith("Account")) {
-                setMasterError(message);
-                return;
+                setMasterError(message)
+                return
             }
 
             if (typeof message === 'string' && message.includes("password")) {
-                setPwdFormErr(message);
-                return;
+                setPwdFormErr(message)
+                return
             }
 
-            setEmailFormErr(message!); // then it is an email error and is safe to assume not undefined
+            setEmailFormErr(message!) // then it is an email error and is safe to assume not undefined
         })
-    };
+    }
 
     return (
         <>
@@ -108,7 +112,7 @@ export default function SignInForm() {
                                         </FormControl>
                                         <FormMessage>
                                             {Array.isArray(emailFormErr) && typeof emailFormErr !== null ? (
-                                                <ul className="list-decimal space-y-8 list-inside">
+                                                <ul className="space-y-8 list-decimal list-inside">
                                                     {emailFormErr.map((err, i) => (
                                                         <li key={i}>{err}</li>
                                                     ))}
@@ -129,7 +133,7 @@ export default function SignInForm() {
                                         </FormControl>
                                         <FormMessage>
                                             {Array.isArray(pwdFormErr) && typeof pwdFormErr !== null ? (
-                                                    <ul className="list-decimal space-y-8 list-inside">
+                                                    <ul className="space-y-8 list-decimal list-inside">
                                                         {pwdFormErr.map((err, i) => (
                                                             <li key={i}>{err}</li>
                                                         ))}
@@ -139,11 +143,11 @@ export default function SignInForm() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="cursor-pointer w-full">Log In</Button>
+                            <Button type="submit" className="w-full cursor-pointer">Log In</Button>
                         </form>
                     </Form>
                 </CardContent>
             </Card>
         </>
-    );
+    )
 }

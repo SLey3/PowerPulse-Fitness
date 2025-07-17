@@ -27,7 +27,6 @@
  * @module compendium/parser
  */
 
-
 import * as fs from 'fs'
 import { join } from 'path'
 import csv from 'csv-parser'
@@ -35,34 +34,28 @@ import memoize from 'just-memoize'
 import { tidy, filter, select, groupBy } from '@tidyjs/tidy'
 
 export interface CompendiumEntry {
-    placeholder: string;
-    type: string;
-    name: string;
-    met: number;
+    placeholder: string
+    type: string
+    name: string
+    met: string
 }
 
 
 const _readCompendium = memoize((): Promise<CompendiumEntry[]> => {
     return new Promise((resolve, reject) => {
-        const compendium: CompendiumEntry[] = [];
+        const compendium: CompendiumEntry[] = []
 
         fs.createReadStream(join(__dirname, 'data/compendium.csv'))
-        .pipe(csv({
-            mapValues: ({header, value }) => {
-                if (header === 'met') {
-                    return parseInt(value);
-                }
-            }
-        }))
+        .pipe(csv())
         .on('data', row => compendium.push(row))
         .on('end', () => {
-            resolve(compendium);
+            resolve(compendium)
         })
         .on('error', (error) => {
-            reject(error);
-        });
-    });
-}); 
+            reject(error)
+        })
+    })
+}) 
 
 
 
@@ -76,13 +69,13 @@ const _readCompendium = memoize((): Promise<CompendiumEntry[]> => {
  * @async
  */
 export async function getTypes(): Promise<string[]> {
-    const type_return: string[] = [];
-    const compendium = await _readCompendium();
-    const types = tidy(compendium, select('type'));
+    const type_return: string[] = []
+    const compendium = await _readCompendium()
+    const types = tidy(compendium, select('type'))
 
-    types.map(val => type_return.push(val.type));
+    types.map(val => type_return.push(val.type))
     
-    return type_return;
+    return type_return
 }
 
 
@@ -96,13 +89,14 @@ export async function getTypes(): Promise<string[]> {
  * @async
  */
 export async function getNames(): Promise<string[]> {
-    const name_return: string[] = [];
-    const compendium = await _readCompendium();
-    const names = tidy(compendium, select('name'));
+    const name_return: string[] = []
+    const compendium = await _readCompendium()
 
-    names.map(val => name_return.push(val.name));
+    const names = tidy(compendium, select('name'))
 
-    return name_return;
+    names.map(val => name_return.push(val.name))
+
+    return name_return
 }
 
 
@@ -113,11 +107,11 @@ export async function getNames(): Promise<string[]> {
  * grouped collection of exercises that match the specified type.
  * 
  * @param type - The exercise type to filter by (e.g., 'resistance', 'cardio')
- * @returns A Promise resolving to a collection of exercise names of the specified type
+ * @returns A Promise resolving to MET value specified from the given type and name
  * @async
  */
-export async function getMET(type: string, name: string): Promise<null | number> {
-    const compendium = await _readCompendium();
+export async function getMET(type: string, name: string): Promise<null | string> {
+    const compendium = await _readCompendium()
 
     try {        
         const [{ met }] = tidy(
@@ -125,9 +119,9 @@ export async function getMET(type: string, name: string): Promise<null | number>
             groupBy('met', [
                 filter(d => d.type === type && d.name === name)
             ])
-        );
+        )
     
-        return met;
+        return met
     } catch (error) {
         return null
     }
@@ -143,5 +137,5 @@ export async function getMET(type: string, name: string): Promise<null | number>
  * @async
  */
 export async function getCompendium(): Promise<CompendiumEntry[]> {
-    return await _readCompendium();
+    return await _readCompendium()
 }

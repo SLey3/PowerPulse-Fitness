@@ -9,17 +9,17 @@ import {
 export class UpdateDto {
     @IsNotEmpty()
     @IsInt()
-    logId: number;
+    logId: number
 
     @IsOptional()
     @IsString()
-    title?: string;
+    title?: string
 
     @IsOptional()
     @IsString()
-    description?: string;
+    description?: string
 
     @IsOptional()
     @IsString()
-    notes?: string;
+    notes?: string
 }

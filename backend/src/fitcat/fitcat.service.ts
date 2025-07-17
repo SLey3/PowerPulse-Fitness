@@ -9,6 +9,10 @@ export class FitcatService {
 
     findAll(uid: number) {
         return this.prisma.workoutCategory.findMany({
+            select: {
+                id: true,
+                name: true
+            },
             where: {
                 userId: uid
             }
@@ -16,7 +20,10 @@ export class FitcatService {
     }
 
     findOne(uid: number, name: string) {
-        return this.prisma.workoutCategory.findUniqueOrThrow({
+        return this.prisma.workoutCategory.findUnique({
+            select: {
+                name: true
+            },
             where: {
                 name: name,
                 userId: uid

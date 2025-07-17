@@ -23,9 +23,9 @@ export function EitherOr(
             options: validationOptions,
             validator: {
                 validate(value: any, args: ValidationArguments) {
-                    return args.constraints.includes(typeof value);
+                    return args.constraints.includes(typeof value)
                 }
             }
-        });
-    };
+        })
+    }
 }

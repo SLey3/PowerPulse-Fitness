@@ -1,4 +1,4 @@
-import { Injectable, ForbiddenException, BadRequestException } from '@nestjs/common'
+import { Injectable, ForbiddenException, BadRequestException, Logger } from '@nestjs/common'
 import { tidy, sliceMax, groupBy, arrange, desc } from '@tidyjs/tidy'
 import { Prisma } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
@@ -8,54 +8,50 @@ import { CreateDto } from './dto'
 
 @Injectable()
 export class FitexerciseService {
+    private readonly logger = new Logger(FitexerciseService.name)
+
     constructor(private prisma: PrismaService, private compendium: CompendiumMService) {}
 
-    findAll(userId: number, cur_page: number, order: 'asc' | 'desc', override_pg_size: number | null = null) {
-        const pg_offset = (cur_page - 1) * (override_pg_size ?? 10);
+    findAll(userId: number) {
         return this.prisma.exercises.findMany({
-            skip: pg_offset,
-            take: override_pg_size ?? 10,
             where: {
-                user: {
-                    id: userId
-                }
-            },
-            orderBy: {
-                id: order
+                userId: userId
             }
-        });
+        })
     }
 
     findOne(name: string, userId: number) {
         return this.prisma.exercises.findFirst({
             where: {
                 name: name,
-                user: {
-                    id: userId
-                }
+                userId: userId
             }
         })
     }
 
-    async getTotalPaginationPages(uid: number) {
-        const { _count: { id: count } } = await this.prisma.exercises.aggregate({
-            _count: {
-                id: true
+    async findExcerpt(userId: number) {
+        this.logger.log(`[DEBUG] userId: ${userId}`)
+        const exercpts = await this.prisma.exercises.findMany({
+            select: {
+                id: true,
+                name: true,
+                type: true,
+                muscle: true
             },
             where: {
-                user: {
-                    id: uid
-                }
+                userId: userId
             }
-        });
+        })
 
-        return Math.ceil(count / 10);
+        this.logger.log(`[DEBUG] returned prisma value: ${exercpts}`)
+
+        return exercpts
     }
 
     async findDashboard(userId: number) {
-        const results = await this.findAll(userId, 1, 'desc', 1);
+        const results = await this.findAll(userId)
 
-        if (results.length === 0) return []; // no need to throw an exception just break the operation here
+        if (results.length === 0) return [] // no need to throw an exception just break the operation here
 
        return tidy(
         results,
@@ -63,28 +59,26 @@ export class FitexerciseService {
             sliceMax(5, 'useCount'),
             arrange(desc('useCount'))
         ])
-       );
+       )
     }
 
     findByFilter(queries: Prisma.ExercisesWhereInput, userId: number) {
         try {
             return this.prisma.exercises.findMany({
                 where: {
-                    user: {
-                        id: userId
-                    },
+                    userId: userId,
                     ...queries
                 }
-            });
+            })
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 throw new ForbiddenException(error.message, {
                     cause: error.cause,
                     description: error.code
-                });
+                })
             }
 
-            throw new Error(error);
+            throw new Error(error)
         }
     }
 
@@ -94,22 +88,17 @@ export class FitexerciseService {
                 name: true
             },
             where: {
-                user: {
-                    id: userId,
-                },
+                userId: userId,
             },
             orderBy: {
                 id: 'desc'
             }
-        });
+        })
     }
 
     async createExercise(createDto: CreateDto, userId: number) {
         // first get met value from the Compendium service
-        const met = await this.compendium.findMET(createDto.type, createDto.name);
-        
-        // if met === null throw BadRequest Error
-        if (!met) throw new BadRequestException(`Exercise type: "${createDto.type}" is not a valid type`);
+        const met = await this.compendium.findMET(createDto.type, createDto.name) || createDto.met || "1"
 
         // create the entry
         try {
@@ -126,17 +115,17 @@ export class FitexerciseService {
                     met: met,
                     userId: userId
                 }
-            });
+            })
 
-            return {"created": `${name} has been added to your exercise records!`};
+            return {"created": `${name} has been added to your exercise records!`}
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
-                    throw new ForbiddenException('Exercise Entry Already Exists');
+                    throw new ForbiddenException('Exercise Entry Already Exists')
                 }
             }
 
-            throw new Error(error);
+            throw new Error(error)
         }
     }
 
@@ -145,14 +134,12 @@ export class FitexerciseService {
         const exercise = await this.prisma.exercises.findFirst({
             where: {
                 name: name,
-                user: {
-                    id: userId
-                }
+                userId: userId
             }
-        });
+        })
 
         if (!exercise) {
-            throw new BadRequestException(`Exercise with name "${name}" not found`);
+            throw new BadRequestException(`Exercise with name "${name}" not found`)
         }
 
         const { name: exercise_name } = await this.prisma.exercises.delete({
@@ -162,9 +149,9 @@ export class FitexerciseService {
             where: {
                 id: exercise.id
             }
-        });
+        })
 
-        return {"confirmation": `${exercise_name} has been deleted!`};
+        return {"confirmation": `${exercise_name} has been deleted!`}
     }
 
     async deleteAll(userId: number) {
@@ -173,22 +160,22 @@ export class FitexerciseService {
                 where: {
                     userId: userId
                 }
-            });
+            })
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new BadRequestException('Operation failed: No records found to delete');
+                    throw new BadRequestException('Operation failed: No records found to delete')
                 }
 
                 throw new BadRequestException(error.message, {
                     cause: error.cause,
                     description: error.code
-                });
+                })
             }
 
-            throw new Error(error);
+            throw new Error(error)
         }
 
-        return {"confirmation": "All Exercises have been deleted!"};
+        return {"confirmation": "All Exercises have been deleted!"}
     }
 }

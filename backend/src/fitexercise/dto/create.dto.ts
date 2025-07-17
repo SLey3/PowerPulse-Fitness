@@ -1,37 +1,41 @@
 import { 
     IsNotEmpty,
     IsNumber,
+    IsBoolean,
     IsOptional,
-    ValidateIf
+    ValidateIf,
+    IsString
 } from "class-validator"
 import { Contains } from "src/utils/validators"
 import { getTypes, getNames } from "src/compendium"
 
 export class CreateDto {
-    custom: boolean;
+    @IsBoolean()
+    @IsNotEmpty()
+    custom: boolean
 
     @ValidateIf(o => o.custom === false)
-    @IsNotEmpty()
     @Contains(getNames())
-    name: string;
+    @IsNotEmpty()
+    name: string
 
     @ValidateIf(o => o.custom === false)
     @IsNotEmpty()
     @Contains(getTypes())
-    type: string;
+    type: string
 
     @IsNotEmpty()
-    muscle: string;
+    muscle: string
 
     @IsNotEmpty()
-    equipment: string;
+    equipment: string
 
     @IsOptional()
-    notes?: string;
+    notes?: string
 
 
     // field to be used if user is creating a custom exercise
     @IsOptional()
-    @IsNumber()
-    met?: number;
+    @IsString()
+    met?: string
 }

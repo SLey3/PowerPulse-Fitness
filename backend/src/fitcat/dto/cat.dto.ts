@@ -2,14 +2,14 @@ import { IsNotEmpty } from "class-validator"
 
 export class CategoryDto {
     @IsNotEmpty()
-    name: string;
+    name: string
     
-    userId: number;
+    userId: number
 }
 
 export class UpdateCategoryDto {
     @IsNotEmpty()
-    name: string;
+    name: string
 
-    oldName: string;
+    oldName: string
 }

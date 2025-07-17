@@ -8,25 +8,25 @@ export class AuthController {
 
     @Post('signup')
     async signUp(@Body() signupDto: SignUpDto) {
-        return this.authService.signUp(signupDto);
+        return this.authService.signUp(signupDto)
     }
 
     @HttpCode(200)
     @Post('signin')
     async signIn(@Body() signInDto: SignInDto) {
-        return this.authService.signIn(signInDto);
+        return this.authService.signIn(signInDto)
     }
 
     @HttpCode(200)
-    @Post('validate-jwt')
+    @Post('validatejwt')
     async validateJwt(@Body() validateJwtDto: VerifyUserDto) {
         // we use VerifyUserDto as validateJwt uses the same parameters as verifyUser
-        return this.authService.validateJwt(validateJwtDto.jwt);
+        return this.authService.validateJwt(validateJwtDto.jwt)
     }
 
     @HttpCode(200)
-    @Post('verify-user')
+    @Post('verifyuser')
     async verifyUser(@Body() verifyUserDto: VerifyUserDto) {
-        return this.authService.verifyUser(verifyUserDto);
+        return this.authService.verifyUser(verifyUserDto)
     }
 }

@@ -8,65 +8,71 @@ import {
     ValidateNested,
     ArrayMinSize
 } from 'class-validator'
-import { EitherOr } from 'src/utils/validators'
+import { Contains, EitherOr } from 'src/utils/validators'
 import { Type } from 'class-transformer'
 import { CreateDto as ExerciseDto } from 'src/fitexercise/dto'
 import { CategoryDto } from 'src/fitcat/dto'
 
 class routineInnerDto {
-    time_format: 'm' | 'hrm'; // hrm: hoursminutes (ex: 1:36 (1hr 36m))
+    @IsString()
+    @Contains(Promise.all(['m', 'hrm']))
+    time_format: 'm' | 'hrm' // hrm: hoursminutes (ex: 1:36 (1hr 36m))
 
     @IsNotEmpty()
     @ValidateNested({ each: true })
     @IsArray()
     @ArrayMinSize(1)
     @Type(() => ExerciseDto)
-    exercise: ExerciseDto;
+    exercise: ExerciseDto
     
     @IsInt()
     @IsPositive()
     @IsNotEmpty()
-    sets: number;
+    sets: number
 
     @IsInt()
     @IsPositive()
     @IsNotEmpty()
-    reps: number;
+    reps: number
 
     @IsInt()
     @IsPositive()
     @IsNotEmpty()
-    weight: number;
+    weight: number
+
+    @IsString()
+    @IsNotEmpty()
+    weightUnit: string
 
     @IsNotEmpty()
     @EitherOr(['number', 'string'])
-    duration: number | string;
+    duration: number | string
 }
 
 export class CreateDto {
     @IsNotEmpty()
     @IsString()
-    title: string;
+    title: string
 
     @IsNotEmpty()
     @IsString()
-    description: string;
+    description: string
 
     @IsNotEmpty()
     @ValidateNested({ each: true })
     @IsArray()
     @ArrayMinSize(1)
     @Type(() => routineInnerDto)
-    routine: routineInnerDto[];
+    routine: routineInnerDto[]
 
     @IsOptional()
     @IsString()
-    notes: string;
+    notes: string
 
     @IsNotEmpty()
     @ValidateNested({ each: true })
     @IsArray()
     @ArrayMinSize(1)
     @Type(() => CategoryDto)
-    categories: CategoryDto[];
+    categories: CategoryDto[]
 }

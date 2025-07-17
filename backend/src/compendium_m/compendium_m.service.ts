@@ -6,18 +6,18 @@ export class CompendiumMService {
     constructor() {}
 
     findAll() {
-        return compendium.getCompendium();
+        return compendium.getCompendium()
     }
 
     findTypes() {
-        return compendium.getTypes();
+        return compendium.getTypes()
     }
 
     findNames() {
-        return compendium.getNames();
+        return compendium.getNames()
     }
 
     findMET(type: string, name: string) {
-        return compendium.getMET(type, name);
+        return compendium.getMET(type, name)
     }
 }

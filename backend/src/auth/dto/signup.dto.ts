@@ -11,28 +11,28 @@ import {
 export class SignUpDto {
     @IsNotEmpty()
     @IsAlphanumeric()
-    firstName: string;
+    firstName: string
 
     @IsNotEmpty()
     @IsAlphanumeric()
-    lastName: string;
+    lastName: string
 
     @IsNotEmpty()
     @IsEmail()
-    email: string;
+    email: string
 
     @IsNotEmpty()
     @IsStrongPassword()
-    password: string;
+    password: string
 
     @IsPhoneNumber()
     @IsOptional()
-    phone?: string;
+    phone?: string
 
     @IsNotEmpty()
     @IsPositive()
-    weight: number;
+    weight: number
 
     // this will always be set as in the signup form, display unit preference will have a default of 'kg'
-    unitPref: 'lbs' | 'kg';
+    unitPref: 'lbs' | 'kg'
 }

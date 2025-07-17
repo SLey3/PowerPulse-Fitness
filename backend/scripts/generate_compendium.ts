@@ -5,7 +5,7 @@ import csv from 'csv-parser'
 import { exit, stdin, stdout } from "process"
 import { tidy, rename, select, filter } from '@tidyjs/tidy'
 
-const rl = readline.createInterface({ input: stdin, output: stdout });
+const rl = readline.createInterface({ input: stdin, output: stdout })
 
 // create parser
 const CompendiumBlacklist = [
@@ -22,22 +22,22 @@ const CompendiumBlacklist = [
     "Religious Activities",
     "Volunteer Activities",
     "Video Games"
-];
+]
 
 
 async function parseCompendium() {
     return new Promise<void>((resolve, reject) => {
-        const compendium: any[] = [];
+        const compendium: any[] = []
 
-        console.log("Commencing parsing. Reading primary data file...");
+        console.log("Commencing parsing. Reading primary data file...")
 
         fs.createReadStream(join(__dirname, '../src/compendium/data/2024_Adult_Compendium_MET.csv'))
         .pipe(csv())
         .on('data', row => {
-            compendium.push(row);
+            compendium.push(row)
         })
         .on('end', () => {
-            console.log("data read, start parsing...");
+            console.log("data read, start parsing...")
 
             const parsedCompendium = tidy(
                 compendium,
@@ -48,76 +48,76 @@ async function parseCompendium() {
                     'activity description': 'name', 
                     'met value': 'met'
                 }),
-            );
+            )
 
-            console.log('finished parsing. starting writing...');
+            console.log('finished parsing. starting writing...')
         
-            const stream = fs.createWriteStream(join(__dirname, '../src/compendium/data/compendium.csv'));
-            stream.write('placeholder,type,name,met\n');
+            const stream = fs.createWriteStream(join(__dirname, '../src/compendium/data/compendium.csv'))
+            stream.write('placeholder,type,name,met\n')
 
             parsedCompendium.forEach(entry => {
-                stream.write(`"pl","${entry.type}","${entry.name}",${entry.met},\n`);
-            });
+                stream.write(`"pl","${entry.type}","${entry.name}",${entry.met},\n`)
+            })
 
             stream.end(() => {
-                console.log("Writing complete.");
-                resolve();
-            });
+                console.log("Writing complete.")
+                resolve()
+            })
         })
         .on('error', (err) => {
-            console.error("Error during CSV processing: ", err);
-            reject(err);
-        });
-    });
+            console.error("Error during CSV processing: ", err)
+            reject(err)
+        })
+    })
 }
 
 
 // main script
 // in an async context
 async function main() {
-    console.log("Generating compendium.csv....");
+    console.log("Generating compendium.csv....")
 
-    const compendiumPath = join(__dirname, "../src/compendium/data/compendium.csv");
+    const compendiumPath = join(__dirname, "../src/compendium/data/compendium.csv")
 
     if (fs.existsSync(compendiumPath)) {
-        console.log("compendium.csv already exists.");
+        console.log("compendium.csv already exists.")
         rl.question("Override default action (exit) and regenerate? (Y/n)\n", async (answer) => {
             if (answer.toUpperCase() === 'Y') {
-                console.log("Deleting current compendium.csv...");
-                fs.rmSync(compendiumPath, { force: true });
-                console.log("Deletion successful! Proceeding to generation...");
-                rl.close();
+                console.log("Deleting current compendium.csv...")
+                fs.rmSync(compendiumPath, { force: true })
+                console.log("Deletion successful! Proceeding to generation...")
+                rl.close()
 
                 try {
-                    await parseCompendium();
-                    console.log("Generation complete! Exiting...");
-                    exit(0);
+                    await parseCompendium()
+                    console.log("Generation complete! Exiting...")
+                    exit(0)
                 } catch (error) {
-                    console.error("Generation failed:", error);
-                    exit(1);
+                    console.error("Generation failed:", error)
+                    exit(1)
                 }
 
             } else {
-                console.log("Exiting without regenerating.");
-                rl.close();
-                exit(0);
+                console.log("Exiting without regenerating.")
+                rl.close()
+                exit(0)
             }
-        });
+        })
     } else {
-        console.log("compendium.csv does not exist, continuing to generate...");
+        console.log("compendium.csv does not exist, continuing to generate...")
 
         try {
-            await parseCompendium();
-            console.log("Generation complete! Exiting...");
-            exit(0);
+            await parseCompendium()
+            console.log("Generation complete! Exiting...")
+            exit(0)
         } catch (error) {
-            console.error("Generation failed:", error);
-            exit(1);
+            console.error("Generation failed:", error)
+            exit(1)
         }
     }
 }
 
 
 // run script
-main();
+main()
 

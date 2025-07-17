@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:3100/:path*",
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/:path*`,
       },
     ];
   },
@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET, POST, PUT, DELETE, OPTIONS",
+            value: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
           },
           {
             key: "Access-Control-Allow-Headers",
@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
     ]
   },
   experimental: {
+    authInterrupts: true,
     ppr: 'incremental'
   },
 };

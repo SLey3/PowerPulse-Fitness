@@ -21,7 +21,7 @@
     "scripts:generate_compendium:build": "node dist/scripts/generate_compendium.js",
     "scripts:generate_compendium:dev": "node scripts/generate_compendium.js",
     "postbuild": "pnpm run scripts:generate_compendium:build",
-    "start": "node dist/src/main.js",
+    "start": "node dist/src/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
