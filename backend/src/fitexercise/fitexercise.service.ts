@@ -31,7 +31,7 @@ export class FitexerciseService {
 
     async findExcerpt(userId: number) {
         this.logger.log(`[DEBUG] userId: ${userId}`)
-        const exercpts = await this.prisma.exercises.findMany({
+        const excerpts = await this.prisma.exercises.findMany({
             select: {
                 id: true,
                 name: true,
@@ -43,9 +43,9 @@ export class FitexerciseService {
             }
         })
 
-        this.logger.log(`[DEBUG] returned prisma value: ${exercpts}`)
+        this.logger.log(`[DEBUG] returned prisma value: ${excerpts}`)
 
-        return exercpts
+        return excerpts
     }
 
     async findDashboard(userId: number) {

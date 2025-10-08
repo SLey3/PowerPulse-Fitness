@@ -39,7 +39,11 @@ export function ComboBox({ searchable_terms, defaultLabels, currentValue, setVal
     const [open, setOpen] = React.useState(false)
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover 
+            open={open} 
+            onOpenChange={setOpen} 
+            modal={true}
+        >
             <PopoverTrigger asChild>
                 <Button
                     variant="outline"
@@ -55,7 +59,7 @@ export function ComboBox({ searchable_terms, defaultLabels, currentValue, setVal
             </PopoverTrigger>
             <PopoverContent className="w-[80.5%] p-0 ml-5">
                 <Command>
-                    <CommandInput placeholder={defaultLabels[1]} />
+                    <CommandInput placeholder={defaultLabels[1]} className="h-9" />
                     <CommandList defaultValue={currentValue}>
                         <CommandEmpty>{defaultLabels[2]}</CommandEmpty>
                         <CommandGroup>
@@ -63,10 +67,8 @@ export function ComboBox({ searchable_terms, defaultLabels, currentValue, setVal
                                 <CommandItem
                                     key={term.value}
                                     value={term.value}
-                                    onSelect={(currentValue) => {
-                                        console.log("selected: ", currentValue)
-                                        const return_value = currentValue === term.value ? "" : term.value
-                                        setValue(return_value)
+                                    onSelect={(curVal) => {
+                                        setValue(curVal === currentValue ? "" : curVal)
                                         setOpen(false)
                                     }}
                                 >

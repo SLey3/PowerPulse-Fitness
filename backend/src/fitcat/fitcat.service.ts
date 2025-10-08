@@ -82,13 +82,13 @@ export class FitcatService {
         }
     }
 
-    async deleteCat(cat_name: string, uid: number) {
+    async deleteCat(id: number, uid: number) {
         const { name } = await this.prisma.workoutCategory.delete({
             select: {
                 name: true
             },
             where: {
-                name: cat_name,
+                id: id,
                 userId: uid
             }
         });

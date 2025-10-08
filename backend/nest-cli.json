@@ -9,7 +9,12 @@
         "include": "compendium/data/2024_Adult_Compendium_MET.csv",
         "outDir": "dist/src",
         "watchAssets": true
+      },
+      {
+        "include": "compendium/data/compendium.csv",
+        "outDir": "dist/src",
+        "watchAssets": true
       }
-    ]
+    ]    
   }
 }

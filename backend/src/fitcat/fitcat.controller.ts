@@ -6,7 +6,8 @@ import {
     Delete, 
     Body, 
     Param, 
-    UseGuards 
+    UseGuards ,
+    ParseIntPipe
 } from '@nestjs/common'
 import { AuthGuard } from 'src/auth/guards/auth.guard'
 import { GetUser } from 'src/decorator'
@@ -42,9 +43,9 @@ export class FitcatController {
     }
 
     @UseGuards(AuthGuard)
-    @Delete(':name')
-    deleteCat(@Param('name') name: string, @GetUser('id') userId: number) {
-        return this.fitcatService.deleteCat(name, userId)
+    @Delete(':id')
+    deleteCat(@Param('id', ParseIntPipe) id: number, @GetUser('id') userId: number) {
+        return this.fitcatService.deleteCat(id, userId)
     }
 
     @UseGuards(AuthGuard)

@@ -95,6 +95,7 @@ export default function Home() {
                     alt="placeholder"
                     height={500}
                     width={500}
+                    priority
                   />
               </>
             }
@@ -109,6 +110,7 @@ export default function Home() {
                     alt="placeholder"
                     height={500}
                     width={500}
+                    priority
                   />
               </>
             }
@@ -183,6 +185,7 @@ export default function Home() {
                     alt="Analytics Home Showcase"
                     height={500}
                     width={500}
+                    priority
                   />
               </>
             }

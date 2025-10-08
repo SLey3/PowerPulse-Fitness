@@ -73,7 +73,6 @@ async function parseCompendium() {
 
 
 // main script
-// in an async context
 async function main() {
     console.log("Generating compendium.csv....")
 

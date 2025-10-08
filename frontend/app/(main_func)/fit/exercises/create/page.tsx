@@ -73,7 +73,6 @@ export default function CreateExercise() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const res = await ec_submit_request(values)
 
-        console.log(res)
         if ('statusCode' in res) {
             console.log(res)
             if(res.message.startsWith('Exercise type')) {

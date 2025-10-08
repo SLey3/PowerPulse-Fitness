@@ -1,12 +1,7 @@
 import type { ExerciseProps } from "../exercises/types"
+import type { CategoriesProps } from "../exercises/cat/types"
 
-// this will be moved to the categories types.tsx when that page is created for now it will remain here
-export interface CategoriesProps {
-    id: number
-    name: string
-}
-
-interface RoutineProps {
+export interface RoutineProps {
     time_format: string
     exercise: ExerciseProps
     sets: number

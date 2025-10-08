@@ -1,9 +1,9 @@
 'use server'
 
-import axios, { type AxiosResponse, type AxiosError } from 'axios'
+import axios, { type AxiosResponse, type AxiosError, Axios } from 'axios'
 import type { LogsFindAllProps } from '@/app/(main_func)/fit/logs/types'
 import type { ExerciseExcerptProps, ExerciseProps } from '@/app/(main_func)/fit/exercises/types'
-import { CategoriesProps } from '@/app/(main_func)/fit/logs/types'
+import type { CategoriesProps } from '@/app/(main_func)/fit/exercises/cat/types'
 import { ApiErrProps } from './types'
 
 
@@ -32,7 +32,6 @@ export async function getExercisesExcerpt(token: string): Promise<ExerciseExcerp
         }
     })
     .then((res: AxiosResponse<ExerciseExcerptProps[] | undefined>) => {
-        console.log('data: ', res.data)
         return res.data
     })
 }
@@ -65,13 +64,26 @@ export async function getCompendiumTypes(): Promise<string[]> {
 }
 
 export async function getLogs(token: string): Promise<LogsFindAllProps[] | ApiErrProps | undefined> {
-    return await axios.get(`/api/fitlogs`, {
+    return await axios.get(`${API_URL}/fitlogs`, {
         headers: {
-            'Authorization': `Bearer ${token as string}`
+            'Authorization': `Bearer ${token}`
         }
     }).then((res: AxiosResponse<LogsFindAllProps[]>) => {
         return res.data
     }).catch((err: AxiosError<ApiErrProps>) => {
         return err.response?.data
+    })
+}
+
+export async function getUserInfo<T>(query: string, token: string): Promise<T> {
+    return await axios.get(`${API_URL}/users/userinfo`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        params: {
+            'q': encodeURIComponent(query)
+        }
+    }).then((res: AxiosResponse<T>) => {
+        return res.data
     })
 }

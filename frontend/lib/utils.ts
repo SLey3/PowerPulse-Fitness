@@ -1,18 +1,15 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import Cookies from "js-cookie"
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
-import axios, { AxiosError } from "axios"
+import axios from "axios"
+import { toast } from "sonner"
 import type { MakeNavLinksReturnT } from "./routes"
 import type { ApiErrProps } from "./actions/types"
+import type { CreateSonnerCookieProps } from "./types"
 
 dayjs.extend(calendar)
-
-// interfaces
-interface VerifySessionReturnProps {
-  isLoggedIn: boolean
-  token?: string
-}
 
 // util functions
 /**
@@ -146,4 +143,62 @@ export function determineFetchedList(list: any[] | ApiErrProps | undefined): any
       ? []
       : list
     : []
+}
+
+/**
+ * Creates a cookie to be used for Toast Notifications containing a type and a message.
+ * If the message exceeds 75 characters, it is truncated to 72 characters and appended with "..." 
+ * unless the last character of the truncated message is already a period.
+ *
+ * @param {CreateSonnerCookieProps} param0
+ * @param {string} param0.type - The type of the message to be stored in the cookie. Options are : 'err', 'success', 'info'
+ * @param {string} param0.msg - The message to be stored in the cookie. It will be truncated if it exceeds 75 characters.
+ */
+export function createSonnerCookie({ type, msg }: CreateSonnerCookieProps) {
+  if (msg.length > 75) {
+    msg = msg.slice(0, 72) // cut message to 72 characters
+
+    if (msg[71] != '.') { // If last character of truncated message is "." no further action is needed
+      msg += '...'
+    }
+  }
+
+  Cookies.set('bread', JSON.stringify({
+    type: type,
+    msg: msg
+  }))
+}
+
+/**
+ * Executes a toast notification based on the provided bread data.
+ * The function parses the input string into a `CreateSonnerCookieProps` object,
+ * determines the type of toast to display (success, error, or info),
+ * and removes the corresponding cookie after execution.
+ *
+ * @param bread - A JSON string representing the toast data, which includes
+ *                the message (`msg`) and the type (`type`) of the toast.
+ *
+ * @remarks
+ * - The `type` property in the parsed object determines the toast type:
+ *   - `'success'` triggers a success toast.
+ *   - `'err'` triggers an error toast.
+ *   - Any other value triggers an info toast.
+ * - The function removes the cookie named `'bread'` after processing.
+ *
+ * @throws Will throw an error if the `bread` parameter is not a valid JSON string.
+ */
+export function executeToast(bread: string) {
+      const sliced_bread = JSON.parse(bread) as CreateSonnerCookieProps
+      const msg = sliced_bread.msg
+
+      switch (sliced_bread.type) {
+          case 'success':
+              toast.success(msg)
+          case 'err':
+              toast.error(msg)
+          default:
+              toast.info(msg)
+      }
+
+      Cookies.remove('bread')
 }

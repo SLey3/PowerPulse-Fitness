@@ -1,5 +1,8 @@
 'use client'
 
+import type { CreateSonnerCookieProps } from '@/lib/types'
+import { executeToast } from '@/lib/utils'
+
 import React from 'react'
 import {
     type ColumnDef,
@@ -16,7 +19,9 @@ import {
     getSortedRowModel,
     useReactTable
 } from '@tanstack/react-table'
-import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowRight, ArrowLeft, LucideTrash2 } from 'lucide-react'
+import Cookies from 'js-cookie'
+
 
 import {
     Table,
@@ -26,9 +31,11 @@ import {
     TableHeader,
     TableRow
 } from '@/components/ui/table'
+import { DeleteInterface } from './delete-interface'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from './checkbox'
+import { Checkbox } from '@/components/ui/checkbox'
+
 
 
 interface DataTableProps<TData, TValue> {
@@ -37,7 +44,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 
-export function createColumns<T>(setActionsDropdown: ColumnDefTemplate<CellContext<T, unknown>>, columns: ColumnDef<T>[]): ColumnDef<T>[] {
+export function createColumns<T extends { id: number }>(setActionsDropdown: ColumnDefTemplate<CellContext<T, unknown>>, columns: ColumnDef<T>[]): ColumnDef<T>[] {
     return [
         {
             id: 'select',
@@ -69,6 +76,31 @@ export function createColumns<T>(setActionsDropdown: ColumnDefTemplate<CellConte
                 accessorKey: 'actions',
                 cell: setActionsDropdown
 
+            },
+            {
+                id: 'delete',
+                header: () => {
+                    return (
+                        <p className="line-clamp-1">
+                            Delete Category
+                        </p>
+                    )
+                },
+                cell: ({ row }: { row: Row<T>}) => {
+                    const log = row.original
+
+                    return (
+                        <DeleteInterface 
+                            api_url_path='fitcat'
+                            item_id={log.id}
+                            triggerBody={
+                                <div className="bg-inherit! translate-x-[25%]">
+                                    <LucideTrash2 className="size-3 text-red-400 hover:brightness-75" />
+                                </div>
+                            }
+                        />
+                    )
+                }
             }
         ])
 } 
@@ -99,6 +131,11 @@ export function DataTable<TData, TValue>({
             rowSelection
         },
     });
+    const bread = Cookies.get('bread')
+
+    if (bread) {
+        executeToast(bread)
+    }
 
     return (
         <div className="absolute pr-10 size-full">

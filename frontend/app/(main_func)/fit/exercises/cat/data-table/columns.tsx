@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { MoreHorizontal, ArrowUpDown, Plus, LucideTrash2 } from 'lucide-react'
+import { MoreHorizontal, ArrowUpDown, Plus } from 'lucide-react'
 
 import { createColumns } from '@/components/ui/data-table'
 import { Button } from '@/components/ui/button'
@@ -14,12 +14,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { CategoriesProps } from '../types'
 
-import { ExerciseProps } from '../types'
-
-
-
-export const columns = createColumns<ExerciseProps>(
+export const columns = createColumns<CategoriesProps>(
     ({ row }) => {
         const log = row.original
         const pathname = usePathname()
@@ -34,30 +31,14 @@ export const columns = createColumns<ExerciseProps>(
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(`${pathname}/${log.id}`)}
-                    >
-                        Copy Exercise Url
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link
                             href={{
-                                pathname: '/edit',
+                                pathname: `${pathname}/edit`,
                                 query: { id: log.id }
                             }}
                         >
-                            Edit Exercise
-                        </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-red-300/60! hover:text-red-500!">
-                        <Link
-                            href={{
-                                pathname: `${pathname}/delete`,
-                                query: { id: log.id }
-                            }}
-                        >
-                            <LucideTrash2 className="size-3 text-red-400" /> Delete Category
+                            Edit Category
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -82,14 +63,6 @@ export const columns = createColumns<ExerciseProps>(
             }
         },
         {
-            accessorKey: 'type',
-            header: 'Exercise Type'
-        },
-        {
-            accessorKey: 'muscle',
-            header: 'Muscle'
-        },
-        {
             id: 'create-btn',
             header: () => {
                 const pathname = usePathname()
@@ -105,6 +78,6 @@ export const columns = createColumns<ExerciseProps>(
                     </Button>
                 )
             }
-        }
+        },
     ]
 )

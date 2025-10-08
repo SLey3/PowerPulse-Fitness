@@ -2,10 +2,12 @@ import {
     Controller, 
     Get, 
     Patch, 
-    Delete, 
-    Param, 
+    Delete,
+    Query, 
     Body,
-    UseGuards
+    UseGuards,
+    BadRequestException,
+    Logger
 } from '@nestjs/common'
 import { AuthGuard } from 'src/auth/guards/auth.guard'
 import { GetUser } from 'src/decorator'
@@ -14,12 +16,30 @@ import { EditUserDto, FindOneDeleteDto } from './dto'
 
 @Controller('users')
 export class UsersController {
+    private readonly logger = new Logger(UsersController.name)
     constructor(private usersService: UsersService) {}
 
     @UseGuards(AuthGuard)
     @Get('singular')
-    findOne(@Param() email: FindOneDeleteDto) {
+    findOne(@Body() email: FindOneDeleteDto) {
         return this.usersService.findOne(email.email)
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('userinfo')
+    findUserInfo(@Query('q') query: string, @GetUser('email') userEmail: string) {
+        const allowedParams = [
+            "id",
+            "firstName",
+            "lastName",
+            "email"
+        ]
+
+        if (!allowedParams.includes(query)) {
+            throw new BadRequestException(`Param "${query}" is not allowed`)
+        }
+
+        return this.usersService.findUserInfo(decodeURIComponent(query), userEmail)
     }
 
     @UseGuards(AuthGuard)

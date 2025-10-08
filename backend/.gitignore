@@ -3,7 +3,6 @@
 /node_modules
 /build
 /scripts/*.js
-/src/compendium/data/compendium.csv
 
 # Logs
 logs

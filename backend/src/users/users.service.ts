@@ -30,6 +30,12 @@ export class UsersService {
       return cleanedUser
     }
 
+    async findUserInfo(query: string, userEmail: string) {
+      const userInfo = await this.findOne(userEmail)
+
+      return { "id": userInfo[query] }
+    }
+
     async editUser(editUserDto: EditUserDto, userId: number) {
         // first filter fields to only those that where inputted by user and check if there is any fields that were inputted
         const filteredFields = formatDto<EditUserDto>(editUserDto)
@@ -71,6 +77,6 @@ export class UsersService {
             }
         })
 
-        return {"confirmation": `Account with email of ${email} is now deleted`}
+        return { "confirmation": `Account with email of ${email} is now deleted` }
     }
 }
