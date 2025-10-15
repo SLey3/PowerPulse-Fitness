@@ -1,6 +1,7 @@
 'use server'
 
-import axios, { type AxiosResponse, type AxiosError, Axios } from 'axios'
+import { unauthorized } from 'next/navigation'
+import axios, { type AxiosResponse, type AxiosError } from 'axios'
 import type { LogsFindAllProps } from '@/app/(main_func)/fit/logs/types'
 import type { ExerciseExcerptProps, ExerciseProps } from '@/app/(main_func)/fit/exercises/types'
 import type { CategoriesProps } from '@/app/(main_func)/fit/exercises/cat/types'
@@ -22,8 +23,6 @@ export async function getExercises(token: string): Promise<ExerciseProps[] | Api
 }
 
 export async function getExercisesExcerpt(token: string): Promise<ExerciseExcerptProps[] | undefined> {
-    console.log("initiating request: ", token)
-    console.log("API URL: ", API_URL)
     return await axios.get(
         `${API_URL}/fitexercise/excerpt`
     , {
@@ -47,6 +46,29 @@ export async function getCategories(token: string): Promise<CategoriesProps[] | 
         }
     )
     .then((res: AxiosResponse<CategoriesProps[] | undefined>) => {
+        return res.data
+    })
+}
+
+export async function getCategory(token: string | undefined, cid: number | string | null): Promise<CategoriesProps | undefined> {
+
+    if (!token) {
+        unauthorized()
+    }
+
+    if (!cid) {
+        throw new Error('Did not find required URL Parameter "CID"')
+    }
+
+    return await axios.get(
+        `${API_URL}/fitcat/${cid}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    )
+    .then((res: AxiosResponse<CategoriesProps>) => {
         return res.data
     })
 }

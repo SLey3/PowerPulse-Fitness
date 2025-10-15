@@ -20,14 +20,14 @@ export class FitcatController {
 
     @UseGuards(AuthGuard)
     @Get()
-    findAll(@GetUser() user: any) {
-        return this.fitcatService.findAll(user.id)
+    findAll(@GetUser('id') userId: number) {
+        return this.fitcatService.findAll(userId)
     }
 
     @UseGuards(AuthGuard)
-    @Get(":name")
-    findOne(@Param('name') name: string, @GetUser('id') userId: number) {
-        return this.fitcatService.findOne(userId, name)
+    @Get(":id")
+    findOne(@Param('id', ParseIntPipe) cid: number, @GetUser('id') userId: number) {
+        return this.fitcatService.findOne(userId, cid)
     }
 
     @UseGuards(AuthGuard)

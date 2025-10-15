@@ -1,6 +1,6 @@
 'use client'
 
-import type { CreateSonnerCookieProps } from '@/lib/types'
+
 import { executeToast } from '@/lib/utils'
 
 import React from 'react'
@@ -95,7 +95,7 @@ export function createColumns<T extends { id: number }>(setActionsDropdown: Colu
                             item_id={log.id}
                             triggerBody={
                                 <div className="bg-inherit! translate-x-[25%]">
-                                    <LucideTrash2 className="size-3 text-red-400 hover:brightness-75" />
+                                    <LucideTrash2 className="size-3 cursor-pointer text-red-400 hover:brightness-75" />
                                 </div>
                             }
                         />

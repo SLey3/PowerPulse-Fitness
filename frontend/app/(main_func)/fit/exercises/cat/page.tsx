@@ -28,7 +28,7 @@ export default async function ExerciseCategoriesHomePage() {
                         notfound={(
                             <TableNotFound columns={columns} />
                         )}
-                        />
+                    />
                 </Suspense>
             </div>
         </>

@@ -35,7 +35,7 @@ export const columns = createColumns<CategoriesProps>(
                         <Link
                             href={{
                                 pathname: `${pathname}/edit`,
-                                query: { id: log.id }
+                                query: { cid: log.id }
                             }}
                         >
                             Edit Category

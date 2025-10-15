@@ -180,7 +180,7 @@ export default function CreateExercise() {
                                         </FormControl>
                                         <FormDescription>
                                             MET (Metabolic Equivalent of Task) is a required field. If you're
-                                            unsure please search up the MET value of the exercise you did
+                                            unsure please search up the MET value of the exercise you did.
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

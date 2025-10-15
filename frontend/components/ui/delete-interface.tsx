@@ -60,7 +60,6 @@ export function DeleteInterface({
         })
         .catch(() => {
             if (create_cookie) {
-                console.log("setting sonner cookie")
                 createSonnerCookie({
                     type: 'err',
                     msg: 'An unexpected error occurred!'
@@ -77,7 +76,7 @@ export function DeleteInterface({
     return (
         <>
             <Dialog>
-                <DialogTrigger asChild>
+                <DialogTrigger className="cursor-auto!" asChild>
                     {triggerBody}
                 </DialogTrigger>
                 <DialogContent>

@@ -7,7 +7,6 @@ import { MoveLeft } from "lucide-react"
 import formSchema from "@/lib/schemas/categories"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import z from "zod"
@@ -43,17 +42,15 @@ export default function CreateCategory() {
         }
     })
 
-    if (!data) return 'failed to load data'
+    if (!data) return 'Failed to load required data. Please try again later.'
     if (isPending) return <Loading />
-    if (error) return 'an error occurred'
+    if (error) return 'An unexpected error occurred. If this persists, contact support.'
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        values.userId = data!.id
-        const res = await ex_cat_submit_request(values)
+        const res = await ex_cat_submit_request(values, data!.id)
 
         if ('statusCode' in res) {
             toast.error("An unexpected error occurred!")
-            console.log(res)
         } else {
             createSonnerCookie({
                 type: 'success',
@@ -89,20 +86,6 @@ export default function CreateCategory() {
                                     Category name must be unique
                                 </FormDescription>
                                 <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="userId"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input
-                                        type="hidden"
-                                        {...field}
-                                    />
-                                </FormControl>
                             </FormItem>
                         )}
                     />

@@ -19,13 +19,14 @@ export class FitcatService {
         });
     }
 
-    findOne(uid: number, name: string) {
+    findOne(uid: number, cid: number) {
         return this.prisma.workoutCategory.findUnique({
             select: {
+                id: true,
                 name: true
             },
             where: {
-                name: name,
+                id: cid,
                 userId: uid
             }
         });
