@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException, BadRequestException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import * as argon2 from 'argon2'
 import { lbs2kg, generateSignUpHtml } from 'src/utils'
 import { PrismaService } from 'src/prisma_m/prisma.service'

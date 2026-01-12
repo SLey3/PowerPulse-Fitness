@@ -14,6 +14,11 @@
         "include": "compendium/data/compendium.csv",
         "outDir": "dist/src",
         "watchAssets": true
+      },
+      {
+        "include": "../generated/*",
+        "outDir": "dist/generated",
+        "watchAssets": true
       }
     ]    
   }

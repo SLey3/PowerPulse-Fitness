@@ -1,10 +1,12 @@
 import { Injectable, ForbiddenException, BadRequestException, Logger } from '@nestjs/common'
 import { tidy, sliceMax, groupBy, arrange, desc } from '@tidyjs/tidy'
-import { Prisma } from '@prisma/client'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { Prisma } from 'generated/prisma'
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { CompendiumMService } from 'src/compendium_m/compendium_m.service'
-import { CreateDto } from './dto'
+import { CreateDto, UpdateDto } from './dto'
+
+import { formatDto } from 'src/utils'
 
 @Injectable()
 export class FitexerciseService {
@@ -20,10 +22,10 @@ export class FitexerciseService {
         })
     }
 
-    findOne(name: string, userId: number) {
+    findOne(eid: number, userId: number) {
         return this.prisma.exercises.findFirst({
             where: {
-                name: name,
+                id: eid,
                 userId: userId
             }
         })
@@ -108,6 +110,7 @@ export class FitexerciseService {
                 },
                 data: {
                     name: createDto.name,
+                    custom: createDto.custom,
                     type: createDto.type,
                     muscle: createDto.muscle,
                     equipment: createDto.equipment,
@@ -129,11 +132,33 @@ export class FitexerciseService {
         }
     }
 
-    async deleteExercise(name: string, userId: number) {
+    async updateExercise(updateDto: UpdateDto, userId: number) {
+        // process data sorting out undefined parameters
+        const {exerciseId, ...filteredDto} = formatDto<UpdateDto>(updateDto)
+
+        if(Object.keys(filteredDto).length === 0) throw new BadRequestException("All Values remained the same. Update not Required")
+
+        const { name } = await this.prisma.exercises.update({
+            select: {
+                name: true
+            },
+            where: {
+                id: exerciseId,
+                userId: userId
+            },
+            data: {
+                ...filteredDto
+            }
+        })
+
+        return {"updated": `${name} has been successfully updated!`}
+    }    
+
+    async deleteExercise(eid: number, userId: number) {
         // First find the exercise to get its ID
         const exercise = await this.prisma.exercises.findFirst({
             where: {
-                name: name,
+                id: eid,
                 userId: userId
             }
         })

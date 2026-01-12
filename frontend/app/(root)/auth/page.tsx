@@ -11,7 +11,11 @@ export default async function authPage() {
                 <h1 className="text-5xl font-bold text-center">Sign In/Up</h1>
             </div>
             <div className="text-center">
-                <Tabs defaultValue='sign-in' className='w-[250px] md:w-[400px] mx-auto'>
+                <Tabs 
+                    tabcheck="sign-up"
+                    defaultValue="sign-in"
+                    className="w-[250px] md:w-[400px] mx-auto"
+                >
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="sign-in">Sign In</TabsTrigger>
                         <TabsTrigger value="sign-up">Sign Up</TabsTrigger>

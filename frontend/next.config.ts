@@ -31,9 +31,9 @@ const nextConfig: NextConfig = {
       }
     ]
   },
+  cacheComponents: true,
   experimental: {
     authInterrupts: true,
-    ppr: 'incremental'
   },
 };
 

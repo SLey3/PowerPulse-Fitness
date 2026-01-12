@@ -10,19 +10,51 @@ import { ApiErrProps } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
-export async function getExercises(token: string): Promise<ExerciseProps[] | ApiErrProps | undefined> {
+type ReturnApiType<P> = Promise<P | ApiErrProps | undefined>
+
+export async function getExercises(token: string): ReturnApiType<ExerciseProps[]> {
+    "use cache"
+
     return await axios.get(`${API_URL}/fitexercise`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
-    }).then((res: AxiosResponse<ExerciseProps[]>) => {
+    })
+    .then((res: AxiosResponse<ExerciseProps[]>) => {
         return res.data
-    }).catch((err: AxiosError<ApiErrProps>) => {
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
         return err.response?.data
     })
 }
 
-export async function getExercisesExcerpt(token: string): Promise<ExerciseExcerptProps[] | undefined> {
+export async function getExercise(token: string | undefined, eid: string | null): ReturnApiType<ExerciseProps> {
+    "use cache"
+
+    if (!token) {
+        unauthorized()
+    }
+
+    if (!eid) {
+        throw new Error('Did not find required URL Parameter "id"')
+    }
+
+    return await axios.get(`${API_URL}/fitexercise/${eid}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then((res: AxiosResponse<ExerciseProps>) => {
+        return res.data
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
+    })
+}
+
+export async function getExercisesExcerpt(token: string): ReturnApiType<ExerciseExcerptProps[]> {
+    "use cache"
+
     return await axios.get(
         `${API_URL}/fitexercise/excerpt`
     , {
@@ -33,10 +65,15 @@ export async function getExercisesExcerpt(token: string): Promise<ExerciseExcerp
     .then((res: AxiosResponse<ExerciseExcerptProps[] | undefined>) => {
         return res.data
     })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
+    })
 }
 
 
-export async function getCategories(token: string): Promise<CategoriesProps[] | undefined> {
+export async function getCategories(token: string): ReturnApiType<CategoriesProps[]> {
+    "use cache"
+
     return await axios.get(
         `${API_URL}/fitcat`,
         {
@@ -48,16 +85,20 @@ export async function getCategories(token: string): Promise<CategoriesProps[] | 
     .then((res: AxiosResponse<CategoriesProps[] | undefined>) => {
         return res.data
     })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
+    })
 }
 
-export async function getCategory(token: string | undefined, cid: number | string | null): Promise<CategoriesProps | undefined> {
+export async function getCategory(token: string | undefined, cid: number | string | null): ReturnApiType<CategoriesProps> {
+    "use cache"
 
     if (!token) {
         unauthorized()
     }
 
     if (!cid) {
-        throw new Error('Did not find required URL Parameter "CID"')
+        throw new Error('Did not find required URL Parameter "cid"')
     }
 
     return await axios.get(
@@ -71,21 +112,38 @@ export async function getCategory(token: string | undefined, cid: number | strin
     .then((res: AxiosResponse<CategoriesProps>) => {
         return res.data
     })
-}
-
-export async function getCompendiumNames(): Promise<string[]> {
-    return await axios.get(`${API_URL}/compendium-m/names`).then((res: AxiosResponse<string[]>) => {
-        return res.data
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
     })
 }
 
-export async function getCompendiumTypes(): Promise<string[]> {
-    return await axios.get(`${API_URL}/compendium-m/types`).then((res: AxiosResponse<string[]>) => {
+export async function getCompendiumNames(): ReturnApiType<string[]> {
+    "use cache"
+
+    return await axios.get(`${API_URL}/compendium-m/names`)
+    .then((res: AxiosResponse<string[]>) => {
         return res.data
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
     })
 }
 
-export async function getLogs(token: string): Promise<LogsFindAllProps[] | ApiErrProps | undefined> {
+export async function getCompendiumTypes(): ReturnApiType<string[]> {
+    "use cache"
+
+    return await axios.get(`${API_URL}/compendium-m/types`)
+    .then((res: AxiosResponse<string[]>) => {
+        return res.data
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
+    })
+}
+
+export async function getLogs(token: string): ReturnApiType<LogsFindAllProps[]> {
+    "use cache"
+    
     return await axios.get(`${API_URL}/fitlogs`, {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -97,7 +155,7 @@ export async function getLogs(token: string): Promise<LogsFindAllProps[] | ApiEr
     })
 }
 
-export async function getUserInfo<T>(query: string, token: string): Promise<T> {
+export async function getUserInfo<T>(query: string, token: string): ReturnApiType<T> {
     return await axios.get(`${API_URL}/users/userinfo`, {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -105,7 +163,11 @@ export async function getUserInfo<T>(query: string, token: string): Promise<T> {
         params: {
             'q': encodeURIComponent(query)
         }
-    }).then((res: AxiosResponse<T>) => {
+    })
+    .then((res: AxiosResponse<T>) => {
         return res.data
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
     })
 }

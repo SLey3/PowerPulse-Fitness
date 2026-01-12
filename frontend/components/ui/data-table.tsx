@@ -44,7 +44,12 @@ interface DataTableProps<TData, TValue> {
 }
 
 
-export function createColumns<T extends { id: number }>(setActionsDropdown: ColumnDefTemplate<CellContext<T, unknown>>, columns: ColumnDef<T>[]): ColumnDef<T>[] {
+export function createColumns<T extends { id: number }>(
+    setActionsDropdown: ColumnDefTemplate<CellContext<T, unknown>>, 
+    columns: ColumnDef<T>[],
+    del_api_path: string,
+    del_header_suffix: string
+): ColumnDef<T>[] {
     return [
         {
             id: 'select',
@@ -82,7 +87,7 @@ export function createColumns<T extends { id: number }>(setActionsDropdown: Colu
                 header: () => {
                     return (
                         <p className="line-clamp-1">
-                            Delete Category
+                            Delete {del_header_suffix}
                         </p>
                     )
                 },
@@ -91,7 +96,7 @@ export function createColumns<T extends { id: number }>(setActionsDropdown: Colu
 
                     return (
                         <DeleteInterface 
-                            api_url_path='fitcat'
+                            api_url_path={del_api_path}
                             item_id={log.id}
                             triggerBody={
                                 <div className="bg-inherit! translate-x-[25%]">
@@ -138,7 +143,7 @@ export function DataTable<TData, TValue>({
     }
 
     return (
-        <div className="absolute pr-10 size-full">
+        <div className="absolute pr-10">
             <div className="flex items-center py-4 gap-x-4">
                 <h3>Search By Title:</h3>
                 <Input

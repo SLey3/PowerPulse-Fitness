@@ -8,13 +8,7 @@ import { columns } from "./data-table/columns"
 import { TableNotFound } from "./data-table/data-not-found"
 
 
-
-
-
-
-export const experimental_ppr = true
-
-export default async function LogsHomePage() {
+async function LogsTable() {
     const cookieStore = await cookies()
     const token = cookieStore.get("t")?.value
 
@@ -23,16 +17,25 @@ export default async function LogsHomePage() {
 
     return (
         <>
+            <DataTable 
+                columns={columns} 
+                data={determinedLogs} 
+                notfound={(
+                    <TableNotFound columns={columns} />
+                )}
+            />
+        </>
+    )
+}
+
+
+export default async function LogsHomePage() {
+    return (
+        <>
             <div className="container px-4 py-8 mx-auto space-y-8">
                 <h1 className="text-3xl font-bold text-white">Fitness Logs</h1>
                 <Suspense fallback={<p>loading..</p>}>
-                    <DataTable 
-                        columns={columns} 
-                        data={determinedLogs} 
-                        notfound={(
-                            <TableNotFound columns={columns} />
-                        )}
-                        />
+                    <LogsTable />
                 </Suspense>
             </div>
         </>

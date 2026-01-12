@@ -1,14 +1,23 @@
 "use client"
 
+import { useSearchParams } from "next/navigation"
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
 function Tabs({
+  tabcheck,
   className,
   ...props
-}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+}: React.ComponentProps<typeof TabsPrimitive.Root> & {tabcheck: string}) {
+  const searchParams = useSearchParams()
+  const defaultTab = searchParams.get("ovr")
+
+  if (defaultTab && defaultTab == tabcheck) {
+    props.defaultValue = defaultTab
+  }
+
   return (
     <TabsPrimitive.Root
       data-slot="tabs"

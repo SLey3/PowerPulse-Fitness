@@ -6,7 +6,7 @@ const baseSchema = z.object({
         .min(1, 'Equipment must not be empty!')
         .max(30, 'Equipment must be at most 30 characters'),
     notes: z.string()
-        .max(50, 'Notes must be at most 50 characters')
+        .max(1000, 'Notes must be at most 1000 characters')
         .optional(),
     name: z.string(), // always required
     type: z.string().optional(),
@@ -88,4 +88,9 @@ const formSchema = baseSchema.superRefine((data, ctx) => {
     }
 });
 
+const editFormSchema = baseSchema.omit({
+    custom: true,
+}).partial()
+
 export default formSchema
+export { editFormSchema }

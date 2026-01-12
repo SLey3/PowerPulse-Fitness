@@ -26,5 +26,5 @@ export async function ec_submit_request(values: z.infer<typeof formSchema>) {
         return err.response?.data
     })
 
-    return res!
+    return res
 }

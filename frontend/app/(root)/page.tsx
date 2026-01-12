@@ -1,13 +1,18 @@
+import { cookies } from "next/headers"
+import Image from "next/image"
+import Link from "next/link"
+
 import HomeShowcase from "@/components/home-showcase"
 import { Button } from "@/components/ui/button"
 
-import Image from "next/image"
-import Link from "next/link"
 
 export const revalidate = 60
 
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies()
+  const isSignedIn = typeof cookieStore.get("t") !== 'undefined'
+
   return (
     <>
       <div className="py-16 md:pt-56 space-y-72">
@@ -33,9 +38,14 @@ export default function Home() {
                   size="lg"
                 >
                   <Link
-                    href="/sign-up"
+                    href={isSignedIn ? 
+                      "/dashboard"
+                      : {
+                      pathname: "/auth",
+                      query: { ovr: "sign-up"}
+                    }}
                   >
-                    Get Started
+                    {isSignedIn ? "Go To Dashboard" : "Get Started"}
                   </Link>
                 </Button>
               </div>
@@ -78,7 +88,10 @@ export default function Home() {
                       variant="ghost"
                       size="sm"
                     >
-                      <Link href="/fit/logs">
+                      <Link href={{
+                        pathname: isSignedIn ? "/fit/logs" : "/auth",
+                        query: isSignedIn ? null : { rdt: "wl"}
+                      }}>
                         Go to Logs
                       </Link>
                     </Button>
@@ -136,7 +149,10 @@ export default function Home() {
                       variant="ghost"
                       size="sm"
                     >
-                      <Link href="/fit/goals">
+                      <Link href={{
+                        pathname: isSignedIn ? "/fit/goals" : "/auth",
+                        query: isSignedIn ? null : { rdt: "fg"}
+                      }}>
                         Go to Goals
                       </Link>
                     </Button>
@@ -168,7 +184,10 @@ export default function Home() {
                       variant="ghost"
                       size="sm"
                     >
-                      <Link href="/fit/analytics">
+                      <Link href={{
+                        pathname: isSignedIn ? "/fit/analytics" : "/auth",
+                        query: isSignedIn ? null : { rdt: "wa" }
+                      }}>
                         Go to Analytics
                       </Link>
                     </Button>

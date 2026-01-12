@@ -1,18 +1,20 @@
 import { 
     Controller, 
     Get, 
-    Post, 
+    Post,
+    Patch,
     Delete, 
     Body, 
     Param, 
     Query,
-    UseGuards 
+    UseGuards ,
+    ParseIntPipe
 } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Prisma } from 'generated/prisma/client'
 import { AuthGuard } from 'src/auth/guards/auth.guard'
 import { GetUser } from 'src/decorator'
 import { FitexerciseService } from './fitexercise.service'
-import { CreateDto } from './dto'
+import { CreateDto, UpdateDto } from './dto'
 
 @Controller('fitexercise')
 export class FitexerciseController {
@@ -24,11 +26,11 @@ export class FitexerciseController {
         return this.fitExcerciseService.findAll(userId)
     }
 
-    // @UseGuards(AuthGuard)
-    // @Get(':name')
-    // findOne(@Param('name') name: string, @GetUser('id') userId: number) {
-    //     return this.fitExcerciseService.findOne(name, userId)
-    // }
+    @UseGuards(AuthGuard)
+    @Get(':id')
+    findOne(@Param('id', ParseIntPipe) eid: number, @GetUser('id') userId: number) {
+        return this.fitExcerciseService.findOne(eid, userId)
+    }
 
     @UseGuards(AuthGuard)
     @Get('excerpt')
@@ -60,11 +62,17 @@ export class FitexerciseController {
         return this.fitExcerciseService.createExercise(createDto, userId)
     }
 
-    // @UseGuards(AuthGuard)
-    // @Delete(':name')
-    // deleteOne(@Param('name') name: string, @GetUser('id') userId: number) {
-    //     return this.fitExcerciseService.deleteExercise(name, userId)
-    // }
+    @UseGuards(AuthGuard)
+    @Patch('edit')
+    updateExercise(@Body() updateDto: UpdateDto, @GetUser('id') userId: number) {
+        return this.fitExcerciseService.updateExercise(updateDto, userId)
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete(':id')
+    deleteOne(@Param('id', ParseIntPipe) eid: number, @GetUser('id') userId: number) {
+        return this.fitExcerciseService.deleteExercise(eid, userId)
+    }
 
     @UseGuards(AuthGuard)
     @Delete()

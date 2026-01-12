@@ -26,6 +26,16 @@ import {
     FormMessage
 } from "@/components/ui/form"
 
+import { 
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -53,7 +63,9 @@ export default function CreateExercise() {
 
     if (compendiumNamesIsPending || compendiumTypesIsPending) return <Loading />
 
-    if (compendiumNamesError || compendiumTypesError) return 'An error occurred'
+    if (!compendiumTypes || !compendiumNames) return ''
+
+    if (compendiumNamesError || compendiumTypesError || 'statusCode' in compendiumTypes || 'statusCode' in compendiumNames) return 'An error occurred'
 
     const exercise_searchable_terms = compendiumNames!.map((val, index) => {
         return {
@@ -72,6 +84,11 @@ export default function CreateExercise() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const res = await ec_submit_request(values)
+
+        if (!res) {
+            toast.error("An Unexpected Error Occurred")
+            return
+        }
 
         if ('statusCode' in res) {
             console.log(res)
@@ -132,7 +149,7 @@ export default function CreateExercise() {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        Select the exercise closest or exactly to what your looking for. If you still dont think any matches, select custom
+                                        Select the exercise closest or exactly to what your looking for. If you still don't think any matches, select custom
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -179,9 +196,67 @@ export default function CreateExercise() {
                                             <Input placeholder="Enter met value..." {...field} />
                                         </FormControl>
                                         <FormDescription>
-                                            MET (Metabolic Equivalent of Task) is a required field. If you're
-                                            unsure please search up the MET value of the exercise you did.
+                                            MET (Metabolic Equivalent of Task) is a required field as it is used for important calculations (such as estimated calorie burned metric). If you're
+                                            unsure estimate a default met value using the following table of basic MET Values:
                                         </FormDescription>
+                                        <Table>
+                                            <TableCaption>A table of basic MET Values based on suggested intensity</TableCaption>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Intensity</TableHead>
+                                                    <TableHead>Examples</TableHead>
+                                                    <TableHead>MET Value Scale</TableHead>
+                                                    <TableHead>Suggested MET Value (Sitting = 1.0 MET)</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell className="font-semibold">Light Intensity</TableCell>
+                                                    <TableCell>
+                                                        <ul className="list-['-']">
+                                                            <li>Light Walking</li>
+                                                            <li>Yoga</li>
+                                                        </ul>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {"<3.0"}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {(1.0 + 2.9) / 2 /* take the median value as the suggested */}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell className="font-semibold">Moderate Intensity</TableCell>
+                                                    <TableCell>
+                                                        <ul className="list-['-']">
+                                                            <li>Brisk Walking</li>
+                                                            <li>Stationary cycling</li>
+                                                        </ul>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        3.0-6.0
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {(6.0 + 3.0) / 2}
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell className="font-semibold">High Intensity</TableCell>
+                                                    <TableCell>
+                                                        <ul className="list-['-']">
+                                                            <li>Hiking Hills</li>
+                                                            <li>Vigorous Running</li>
+                                                        </ul>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {">6.0"}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        7.0 {/* can't calculate a median without a maximum so suggest 6 + 1 */}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
                                         <FormMessage />
                                     </FormItem>
                                 )}

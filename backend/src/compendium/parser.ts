@@ -31,7 +31,7 @@ import * as fs from 'fs'
 import { join } from 'path'
 import csv from 'csv-parser'
 import memoize from 'just-memoize'
-import { tidy, filter, select, groupBy } from '@tidyjs/tidy'
+import { tidy, filter, select, groupBy, sort } from '@tidyjs/tidy'
 
 export interface CompendiumEntry {
     placeholder: string
@@ -92,7 +92,7 @@ export async function getNames(): Promise<string[]> {
     const name_return: string[] = []
     const compendium = await _readCompendium()
 
-    const names = tidy(compendium, select('name'))
+    const names = tidy(compendium, select('name'), sort('name'))
 
     names.map(val => name_return.push(val.name))
 

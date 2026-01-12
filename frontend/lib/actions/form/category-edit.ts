@@ -54,5 +54,5 @@ export async function ex_cat_edit_submit(
         return res
     })
 
-    return res!
+    return res
 }

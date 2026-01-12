@@ -1,5 +1,5 @@
 import { Injectable, ImATeapotException, BadRequestException, NotFoundException } from '@nestjs/common'
-import { Prisma } from '@prisma/client'
+import { Prisma } from 'generated/prisma'
 import { 
     tidy,
     sum,

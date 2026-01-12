@@ -3,10 +3,11 @@ export interface ExerciseProps {
     custom: boolean
     name: string
     type: string
+    useCount: number
     muscle: string
     equipment: string
     notes?: string
-    met?: string 
+    met: string 
 }
 
 export interface ExerciseExcerptProps {

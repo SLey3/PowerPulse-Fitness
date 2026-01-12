@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useLoginRedirectMappings } from "@/hooks/use-login-redirects"
+
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import Cookies from "js-cookie"
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import axios, { type AxiosResponse, type AxiosError} from 'axios'
+
 import {
     Card,
     CardContent,
@@ -48,6 +51,8 @@ export default function SignInForm() {
     const [emailFormErr, setEmailFormErr] = useState<null | string | string[]>(null)
     const [pwdFormErr, setPwdFormErr] = useState<null | string | string[]>(null)
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const redirectMappings = useLoginRedirectMappings()
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -56,6 +61,8 @@ export default function SignInForm() {
         }
     })
 
+    const redirectOVR = searchParams.get("rdt") ? redirectMappings[searchParams.get("rdt") as keyof typeof redirectMappings] : undefined
+
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         axios.post("/api/auth/signin", values)
         .then((res: AxiosResponse<{access_token: string}>) => {
@@ -63,7 +70,7 @@ export default function SignInForm() {
                 expires: 10 * 86_400,
                 sameSite: 'Strict'
             })
-            router.push("/dashboard")
+            router.push(redirectOVR ? redirectOVR : "/dashboard")
         })
         .catch((err: AxiosError<FormErr>) => {
             const message = err.response?.data.message
@@ -90,7 +97,7 @@ export default function SignInForm() {
 
     return (
         <>
-            <Card>
+            <Card id="sign-in">
                 <CardHeader>
                     <CardTitle>Sign In</CardTitle>
                     <CardDescription>Sign in to your Account</CardDescription>

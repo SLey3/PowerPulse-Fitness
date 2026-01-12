@@ -37,6 +37,11 @@ export function DeleteInterface({
     const baseApiURL = process.env.NEXT_PUBLIC_BACKEND_URL
     const apiToken = Cookies.get("t")
 
+    if (!apiToken) {
+        toast.error("An unexpected error occurred. Please log in again.")
+        return
+    }
+
     const onYes = () => {
         setIsProcessing(true)
 

@@ -15,21 +15,26 @@ export class CreateDto {
 
     @ValidateIf(o => o.custom === false)
     @Contains(getNames())
+    @IsString()
     @IsNotEmpty()
     name: string
 
     @ValidateIf(o => o.custom === false)
     @IsNotEmpty()
+    @IsString()
     @Contains(getTypes())
     type: string
 
     @IsNotEmpty()
+    @IsString()
     muscle: string
 
     @IsNotEmpty()
+    @IsString()
     equipment: string
 
     @IsOptional()
+    @IsString()
     notes?: string
 
 

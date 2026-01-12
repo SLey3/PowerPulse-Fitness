@@ -1,5 +1,5 @@
 import { Injectable, ForbiddenException, ImATeapotException } from '@nestjs/common'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { CategoryDto, UpdateCategoryDto } from './dto'
 

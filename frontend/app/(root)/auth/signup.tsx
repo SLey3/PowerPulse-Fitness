@@ -130,7 +130,7 @@ export default function SignUpForm() {
 
     return (
         <>
-            <Card>
+            <Card id="sign-up">
                 <CardHeader>
                     <CardTitle>Sign Up</CardTitle>
                     <CardDescription>Create your account with PowerPulse Fitness</CardDescription>

@@ -9,9 +9,6 @@ import { TableNotFound } from "./data-table/data-not-found"
 import Loading from "./loading"
 
 
-export const experimental_ppr = true
-
-
 export default async function LogsHomePage() {
     const cookieStore = await cookies()
     const token = cookieStore.get("t")?.value

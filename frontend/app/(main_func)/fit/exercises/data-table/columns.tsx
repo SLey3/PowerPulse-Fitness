@@ -35,29 +35,25 @@ export const columns = createColumns<ExerciseProps>(
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(`${pathname}/${log.id}`)}
+                        onClick={() => navigator.clipboard.writeText(`${window.location.href}/view/${log.id}`)}
                     >
                         Copy Exercise Url
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                        <Link
-                            href={{
-                                pathname: '/edit',
-                                query: { id: log.id }
-                            }}
-                        >
-                            Edit Exercise
+                        <Link href={`${pathname}/view/${log.id}`} className="overflow-hidden text-ellipsis">
+                            View {log.name.length > 20 ? `${log.name.slice(0, 20)}...` : log.name}
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-red-300/60! hover:text-red-500!">
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem disabled={!log.custom} aria-disabled={!log.custom}>
                         <Link
                             href={{
-                                pathname: `${pathname}/delete`,
+                                pathname: `${pathname}/edit`,
                                 query: { id: log.id }
                             }}
+                            aria-disabled={!log.custom}
                         >
-                            <LucideTrash2 className="size-3 text-red-400" /> Delete Category
+                            Edit Exercise
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -106,5 +102,7 @@ export const columns = createColumns<ExerciseProps>(
                 )
             }
         }
-    ]
+    ],
+    "fitexercise",
+    "Exercise"
 )

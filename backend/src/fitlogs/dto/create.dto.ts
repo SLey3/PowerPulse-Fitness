@@ -1,5 +1,4 @@
 import {
-    IsOptional,
     IsNotEmpty,
     IsInt,
     IsString,
@@ -65,7 +64,7 @@ export class CreateDto {
     @Type(() => routineInnerDto)
     routine: routineInnerDto[]
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
     notes: string
 

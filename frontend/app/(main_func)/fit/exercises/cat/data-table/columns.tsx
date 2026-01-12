@@ -79,5 +79,7 @@ export const columns = createColumns<CategoriesProps>(
                 )
             }
         },
-    ]
+    ],
+    "fitcat",
+    "Category"
 )

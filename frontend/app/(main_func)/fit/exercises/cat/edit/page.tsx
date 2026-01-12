@@ -1,20 +1,21 @@
 'use client'
 
-import { createSonnerCookie } from "@/lib/utils"
 import { getCategory } from "@/lib/actions"
 import { ex_cat_edit_submit } from "@/lib/actions/form/category-edit"
 import formSchema from "@/lib/schemas/categories"
+import { createSonnerCookie } from "@/lib/utils"
 
-import { useSearchParams, useRouter } from "next/navigation"
-import Link from "next/link"
-import { useQuery } from "@tanstack/react-query"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { MoveLeft } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 import Cookies from "js-cookie"
+import { MoveLeft } from "lucide-react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useForm } from "react-hook-form"
 import z from "zod"
 
-import { 
+import { Button } from "@/components/ui/button"
+import {
     Form,
     FormControl,
     FormField,
@@ -23,7 +24,6 @@ import {
     FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import Loading from "../loading"
 
 
@@ -43,12 +43,14 @@ export default function CatEditPage() {
     })
 
 
-    if (isPending) return <Loading />
-    if (error) return "The following Error occurred: " + error.message
-    if (!data) return "Failed to load data. Requested Category may not exist. Check ID."
+    if (isPending && !data) return <Loading />
+    if (error) return "The following Fatal Error occurred: " + error.message
+    if (data && 'statusCode' in data) return `An unexpected Error occurred (Code: ${data.statusCode})`
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const res = await ex_cat_edit_submit(values, data!.name)
+        if (!data || ('statusCode' in data)) return
+
+        const res = await ex_cat_edit_submit(values, data.name)
 
         if ('statusCode' in res || 'default_err' in res) {
             const msg = 'message' in res
@@ -62,7 +64,7 @@ export default function CatEditPage() {
         } else {
             createSonnerCookie({
                 type: 'success',
-                msg: `Category "${data!.name}" has been updated too: "${values.name}"`
+                msg: `Category "${data.name}" has been updated too: "${values.name}"`
             })
 
             router.push(".")
@@ -79,7 +81,7 @@ export default function CatEditPage() {
                     </Button>
                 </Link>
                 <h1 className="text-3xl font-bold text-white">
-                    Edit Exercise Category (ID: {data.id})
+                    Edit Exercise Category
                 </h1>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -93,7 +95,7 @@ export default function CatEditPage() {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder={data.name}
+                                            placeholder={data!.name}
                                             {...field}
                                         />
                                     </FormControl>

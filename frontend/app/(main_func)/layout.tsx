@@ -34,7 +34,7 @@ export default function MainFunctionalityLayout({
             <SidebarProvider>
               <UserDashboard />
               <main>
-                <SidebarTrigger />
+                <SidebarTrigger className="fixed" />
                 {children}
               </main>
               <Toaster />

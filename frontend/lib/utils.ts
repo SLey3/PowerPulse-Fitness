@@ -202,3 +202,19 @@ export function executeToast(bread: string) {
 
       Cookies.remove('bread')
 }
+
+/**
+ * Generates a default error message for undefined values.
+ * 
+ * @param msg_type - The type of value that could not be loaded
+ * @returns A formatted error message indicating the value could not be loaded
+ * 
+ * @example
+ * ```tsx
+ * <div>
+ *  {data ? data : defaultUndefinedMsg("user profile")}
+ * </div>
+ * // Returns: 'Could not load existing "user profile" value'
+ * ```
+ */
+export const defaultUndefinedMsg = (msg_type: string) => `Could not load existing "${msg_type}" value`
