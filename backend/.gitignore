@@ -4,6 +4,10 @@
 /build
 /scripts/*.js
 
+
+# prisma
+/generated
+
 # Logs
 logs
 *.log
