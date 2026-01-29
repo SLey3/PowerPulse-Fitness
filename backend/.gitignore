@@ -7,6 +7,7 @@
 
 # prisma
 /generated
+/prisma/migrations
 
 # Logs
 logs
