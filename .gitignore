@@ -1,0 +1,4 @@
+# main .gitignore file for outside backend & frontend ignored paths
+
+# vscode
+/.vscode
