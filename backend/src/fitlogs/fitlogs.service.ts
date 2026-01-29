@@ -1,4 +1,4 @@
-import { Injectable, ImATeapotException, BadRequestException, NotFoundException } from '@nestjs/common'
+import { Injectable, ImATeapotException, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common'
 import { Prisma } from 'generated/prisma'
 import { 
     tidy,
@@ -6,11 +6,13 @@ import {
     summarize, 
     groupBy
 } from '@tidyjs/tidy'
+import dayjs from 'dayjs'
+
 import { hr2m, vals2ints, formatDto, m2hr} from 'src/utils'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { CompendiumMService } from 'src/compendium_m/compendium_m.service'
 import { CreateDto, UpdateDto } from './dto'
-import dayjs from 'dayjs'
+import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 
 @Injectable()
 export class FitlogsService {
@@ -75,6 +77,9 @@ export class FitlogsService {
     }
 
     async createLog(createDto: CreateDto, userId: number) {
+        let created_log: {
+            title: string;
+        };
         const user = await this.prisma.user.findUnique({
             select: {
                 weight: true
@@ -134,22 +139,32 @@ export class FitlogsService {
             })
         )[0].estimatedCalorieBurn
 
-        const { title } = await this.prisma.workoutLog.create({
-            select: {
-                title: true
-            },
-            data: {
-                title: createDto.title,
-                description: createDto.description,
-                routine: createDto.routine as unknown as Prisma.JsonArray,
-                duration: duration,
-                notes: createDto.notes,
-                estimatedCalorieBurn: estimatedCalorieBurn,
-                userId: userId,
+        try {
+            created_log = await this.prisma.workoutLog.create({
+                select: {
+                    title: true
+                },
+                data: {
+                    title: createDto.title,
+                    description: createDto.description,
+                    routine: createDto.routine as unknown as Prisma.JsonArray,
+                    duration: duration,
+                    notes: createDto.notes,
+                    estimatedCalorieBurn: estimatedCalorieBurn,
+                    userId: userId,
+                }
+            })
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2002') {
+                    throw new ForbiddenException("Log already exists!")
+                }
             }
-        })
 
-        return {"created": `Log: ${title} added to your logs!`}
+            throw new Error(error)
+        }
+
+        return {"created": `Log: ${created_log.title} added to your logs!`}
     }
 
     async updateLog(updateDto: UpdateDto, userId: number) {
@@ -163,7 +178,7 @@ export class FitlogsService {
                 title: true
             },
             where: {
-                id: logId,
+                id: logId!,
                 userId: userId
             },
             data: {

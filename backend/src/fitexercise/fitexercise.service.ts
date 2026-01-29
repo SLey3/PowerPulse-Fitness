@@ -4,7 +4,7 @@ import { Prisma } from 'generated/prisma'
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { CompendiumMService } from 'src/compendium_m/compendium_m.service'
-import { CreateDto, UpdateDto } from './dto'
+import { CreateDto, UpdateDto, UpdateUseCountDto } from './dto'
 
 import { formatDto } from 'src/utils'
 
@@ -98,6 +98,42 @@ export class FitexerciseService {
         })
     }
 
+    async findExerciseAnalyticsData(userId: number, all: boolean, opts: Prisma.ExercisesSelect | undefined) {
+        const blacklist = {
+            userId: true,
+            notes: true,
+            custom: true
+        }
+
+        if (all) {
+            return this.prisma.exercises.findMany({
+                omit: {...blacklist},
+                where: {
+                    userId: userId
+                }
+            })
+        } else {
+            if (!opts) throw new BadRequestException("Options is a required parameter if not requesting all available parameters")
+
+            // check for any not permitted keys being set in opts
+            const optsKeys = Object.keys(opts)
+            const blacklistKeys = Object.keys(blacklist)
+
+            optsKeys.forEach(key => {
+                if (blacklistKeys.includes(key)) {
+                    throw new BadRequestException(`${key} is not permitted for analytics operations`)
+                }
+            })
+
+            return this.prisma.exercises.findMany({
+                select: {...opts},
+                where: {
+                    userId: userId
+                }
+            })
+        }
+    }
+
     async createExercise(createDto: CreateDto, userId: number) {
         // first get met value from the Compendium service
         const met = await this.compendium.findMET(createDto.type, createDto.name) || createDto.met || "1"
@@ -130,6 +166,31 @@ export class FitexerciseService {
 
             throw new Error(error)
         }
+    }
+
+    async updateUseCount(updateUseCountDto: UpdateUseCountDto, userId: number) {
+        const check_num = (check: string) => updateUseCountDto.dir === check ? 1 : 0
+
+        await this.prisma.exercises.findUniqueOrThrow({
+            where: {
+                id: updateUseCountDto.id,
+                userId: userId
+            }
+        })
+
+        await this.prisma.exercises.update({
+
+            data: {
+                useCount: {
+                    increment: check_num("pos"),
+                    decrement: check_num("neg")
+                }
+            },
+            where: {
+                id: updateUseCountDto.id,
+                userId: userId
+            }
+        })
     }
 
     async updateExercise(updateDto: UpdateDto, userId: number) {

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron } from "@nestjs/schedule"
 import dayjs from 'dayjs'
+import { Prisma } from 'generated/prisma'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 
 @Injectable()
@@ -25,5 +26,45 @@ export class TasksService {
         })
 
         this.logger.log(`[CRON DELETE UNVERIFIED] Deleted ${deleted.count} accounts created exactly two days ago`)
+    }
+
+    @Cron('0 0 * * *')
+    async updateFitnessGoalsDays() {
+        const goals = await this.prisma.fitnessGoal.findMany({
+            where: {
+                status: { notIn: ['FAILED', 'COMPLETED'] }
+            }
+        })
+
+        if (goals.length === 0) {
+            this.logger.log('[CRON Fitness Goals DaysRemaining Updater] All User Goals are either completed or failed. No Updates were made.')
+
+            return
+        }
+
+        this.logger.log('[CRON Fitness Goals DaysRemaining Updater] Updating user goals...')
+
+        for (const goal of goals) {
+            if (['FAILED', 'COMPLETED'].includes(goal.status)) {
+                continue
+            }
+
+            const completeBy = dayjs(goal.completeBy)
+            const today = dayjs()
+            
+            const date_diff = completeBy.diff(today, 'day')
+
+            await this.prisma.fitnessGoal.update({
+                where: {
+                    id: goal.id
+                },
+                data: {
+                    status: date_diff < 0 ? 'FAILED' : goal.status,
+                    daysRemaining: date_diff
+                }
+            })
+        }
+
+        this.logger.log('[CRON Fitness Goals DaysRemaining Updater] All goals have been updated.')
     }
 }

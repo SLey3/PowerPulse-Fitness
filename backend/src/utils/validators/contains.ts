@@ -8,8 +8,7 @@ import { registerDecorator, type ValidationOptions, type ValidationArguments } f
  * It validates that the property value is a string and is included in the resolved array.
  * 
  * @param allowedValues - A Promise that resolves to an array of strings to check against
- * @param validationOptions - Optional validation options to customize the validation behavior
- * @returns A PropertyDecorator function that registers the validation decorator
+ * @param validationOptions - See class-validator docs
  */
 export function Contains(allowedValues: Promise<string[]>, validationOptions?: ValidationOptions) {
     return function (object: Object, propertyName: string) {

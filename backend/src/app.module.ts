@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module'
 import { FitlogsModule } from './fitlogs/fitlogs.module'
 import { FitcatModule } from './fitcat/fitcat.module'
 import { FitexerciseModule } from './fitexercise/fitexercise.module'
+import { FitGoalsModule } from './fitgoals/fitgoals.module'
 import { CompendiumMModule } from './compendium_m/compendium_m.module'
 
 @Module({
@@ -27,6 +28,7 @@ import { CompendiumMModule } from './compendium_m/compendium_m.module'
     UsersModule,
     FitlogsModule,
     FitcatModule,
+    FitGoalsModule,
     FitexerciseModule,
     CompendiumMModule,
   ],

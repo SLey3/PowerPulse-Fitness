@@ -35,7 +35,7 @@ model WorkoutTemplate {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   templateName String            @unique
-  description  String
+  description  String            @unique
   routine      Json              @db.JsonB
   duration     Int
   notes        String?
@@ -49,7 +49,7 @@ model WorkoutLog {
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
   title                String            @unique
-  description          String
+  description          String            @unique
   routine              Json              @db.JsonB
   duration             Int
   notes                String?
@@ -70,17 +70,18 @@ model WorkoutCategory {
 }
 
 model FitnessGoal {
-  id          Int        @id @default(autoincrement())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  title       String     @unique
-  description String
-  completeBy  DateTime
-  progress    Float      @default(0.0)
-  status      GoalStatus @default(NOT_STARTED)
-  subgoals    Json?      @db.JsonB
-  userId      Int
-  user        User       @relation(fields: [userId], references: [id])
+  id            Int        @id @default(autoincrement())
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  title         String     @unique
+  description   String     @unique
+  completeBy    DateTime
+  daysRemaining Int
+  progress      Float      @default(0.0)
+  status        GoalStatus @default(NOT_STARTED)
+  subgoals      Json?      @db.JsonB
+  userId        Int
+  user          User       @relation(fields: [userId], references: [id])
 }
 
 model Exercises {

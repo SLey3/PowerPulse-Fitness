@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import Link from "next/link"
@@ -6,12 +7,8 @@ import HomeShowcase from "@/components/home-showcase"
 import { Button } from "@/components/ui/button"
 
 
-export const revalidate = 60
-
-
-export default async function Home() {
-  const cookieStore = await cookies()
-  const isSignedIn = typeof cookieStore.get("t") !== 'undefined'
+async function HomePage() {
+  const isSignedIn = (await cookies()).has('t')
 
   return (
     <>
@@ -211,6 +208,16 @@ export default async function Home() {
           />
         </div>
       </div>
+    </>
+  )
+}
+
+export default async function Home() {
+  return (
+    <>
+      <Suspense fallback={<p>Loading Home Page...</p>}>
+        <HomePage />
+      </Suspense>
     </>
   )
 }

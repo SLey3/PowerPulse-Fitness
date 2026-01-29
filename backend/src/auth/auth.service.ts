@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import * as argon2 from 'argon2'
+import { $Enums } from 'generated/prisma'
 import { lbs2kg, generateSignUpHtml } from 'src/utils'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { EmailService } from 'src/email/email.service'
@@ -54,7 +55,13 @@ export class AuthService {
     }
 
     async signUp(dto: SignUpDto) {
-        let user
+        let user: {
+            id: number;
+            email: string;
+            firstName: string;
+            lastName: string;
+            role: $Enums.UserRole;
+        }
         const frontend_url = this.configService.get<string>("FRONTEND_URL")!
         const mail_sender_name = this.configService.get<string>("MAIL_SENDER_NAME")!
         const mail_sender_email = this.configService.get<string>("MAIL_SENDER_EMAIL")!

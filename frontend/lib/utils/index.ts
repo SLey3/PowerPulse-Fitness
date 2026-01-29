@@ -5,8 +5,8 @@ import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
 import axios from "axios"
 import { toast } from "sonner"
-import type { MakeNavLinksReturnT } from "./routes"
-import type { ApiErrProps } from "./actions/types"
+import type { MakeNavLinksReturnT } from "../routes"
+import type { ApiErrProps } from "../actions/types"
 import type { CreateSonnerCookieProps } from "./types"
 
 dayjs.extend(calendar)

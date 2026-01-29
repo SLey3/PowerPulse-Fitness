@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Exercises" ALTER COLUMN "met" SET DATA TYPE TEXT;

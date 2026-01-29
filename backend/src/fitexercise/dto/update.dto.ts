@@ -1,10 +1,13 @@
 import { 
     IsOptional,
+    IsNotEmpty,
     IsString,
     IsInt
 } from "class-validator"
+import { Contains } from "src/utils/validators";
 
 export class UpdateDto {
+    @IsNotEmpty()
     @IsInt()
     exerciseId: number;
     
@@ -30,5 +33,16 @@ export class UpdateDto {
 
     @IsOptional()
     @IsString()
-    met?: string
+    met?: string;
+}
+
+export class UpdateUseCountDto {
+    @IsNotEmpty()
+    @IsInt()
+    id: number;
+
+    @IsNotEmpty()
+    @IsString()
+    @Contains(Promise.all(["pos", "neg"]))
+    dir: string;
 }
