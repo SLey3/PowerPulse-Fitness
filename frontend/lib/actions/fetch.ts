@@ -40,7 +40,14 @@ export async function getExercise(token: string | undefined, eid: string | null)
         throw new Error('Did not find required URL Parameter "id"')
     }
 
-    return await axios.get(`${API_URL}/fitexercise/${eid}`, {
+    const safeEid = eid.trim()
+    // Allow only a conservative set of characters for the exercise ID to avoid SSRF/path manipulation
+    const eidPattern = /^[A-Za-z0-9_-]+$/
+    if (!eidPattern.test(safeEid)) {
+        throw new Error('Invalid exercise id format')
+    }
+
+    return await axios.get(`${API_URL}/fitexercise/${safeEid}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
