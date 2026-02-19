@@ -94,7 +94,7 @@ export async function getNames(): Promise<string[]> {
 
     const names = tidy(compendium, select('name'), sort('name'))
 
-    names.map(val => name_return.push(val.name))
+    names.map(val => name_return.push(val.name.trim()))
 
     return name_return
 }

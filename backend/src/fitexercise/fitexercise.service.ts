@@ -1,9 +1,10 @@
-import { Injectable, ForbiddenException, BadRequestException, Logger } from '@nestjs/common'
+import { Injectable, ForbiddenException, BadRequestException, Logger, InternalServerErrorException } from '@nestjs/common'
 import { tidy, sliceMax, groupBy, arrange, desc } from '@tidyjs/tidy'
 import { Prisma } from 'generated/prisma'
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import { PrismaService } from 'src/prisma_m/prisma.service'
 import { CompendiumMService } from 'src/compendium_m/compendium_m.service'
+import { DeleteManyDto } from 'src/utils/dtos'
 import { CreateDto, UpdateDto, UpdateUseCountDto } from './dto'
 
 import { formatDto } from 'src/utils'
@@ -238,6 +239,43 @@ export class FitexerciseService {
         })
 
         return {"confirmation": `${exercise_name} has been deleted!`}
+    }
+
+    async deleteManyExercises(deleteManyDto: DeleteManyDto, userId: number) {
+        try {
+            const { count: delCount } = await this.prisma.exercises.deleteMany({
+                where: {
+                    id: {
+                        in: deleteManyDto.ids
+                    },
+                    userId: userId
+                }
+            })
+
+
+            
+            if (delCount === deleteManyDto.ids.length) {
+                return {"confirmation": "Requested exercises have been deleted!"}
+            } else {
+                throw new InternalServerErrorException({
+                    goalIds: deleteManyDto.ids,
+                    message: "Something wrong has occurred. Please try again later."
+                })
+            }   
+        }  catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException('Operation failed: No records found to delete')
+                }
+
+                throw new BadRequestException(error.message, {
+                    cause: error.cause,
+                    description: error.code
+                })
+            }
+
+            throw new Error(error)
+        }
     }
 
     async deleteAll(userId: number) {

@@ -76,10 +76,15 @@ export default function CreateExercise() {
     })
 
     function setExerciseComboboxValue(e: string) {
-        const entry = exercise_searchable_terms.filter(val => val.value === e)[0]
+        const entry = exercise_searchable_terms.filter(val => val.value === e)
 
-        form.setValue('name', entry.value)
-        form.setValue('type', entry.hoverLabel)
+        if (entry.length === 0) {
+            toast.warning("Exercise is currently not available. Try again or want to make a custom exercise?")
+            return
+        }
+
+        form.setValue('name', entry[0].value)
+        form.setValue('type', entry[0].hoverLabel)
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -229,7 +234,7 @@ export default function CreateExercise() {
                                                     <TableCell className="font-semibold">Moderate Intensity</TableCell>
                                                     <TableCell>
                                                         <ul className="list-['-']">
-                                                            <li>Brisk Walking</li>
+                                                            <li>Recreational Swimming</li>
                                                             <li>Stationary cycling</li>
                                                         </ul>
                                                     </TableCell>

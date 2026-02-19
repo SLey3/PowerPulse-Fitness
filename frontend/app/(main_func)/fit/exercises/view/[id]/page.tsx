@@ -21,8 +21,27 @@ export default async function ViewExercise({
     const { id } = await params;
     const exercise = await getExercise(token?.value, id)
 
-    if (!exercise) return `Check ID Parameter. Exercise of ID "${id}" does not exist.`
-    if ('statusCode' in exercise) return `Failed to load page. Error received (${exercise.statusCode}): ${exercise.message}`
+    if (!exercise) return (
+        <>
+        <div className="container mx-auto px-4 py-8">
+            <div className="border-2 bg-white font-medium text-black shadow-lg shadow-slate-100/50 h-auto p-10 rounded-md">
+                <Link href="..">
+                    <Button variant="link" className="text-black">
+                        <MoveLeft className="size-4" /> Back to Exercises
+                    </Button>
+                </Link>
+                <div className="mt-8 text-center">
+                    <p>Check ID Parameter. Exercise of ID "{id}" does not exist.</p>
+                </div>
+            </div>
+        </div>
+        </>
+    )
+    if ('statusCode' in exercise) return (
+        <>
+            <p className="indent-4">`Failed to load page. Error received ({exercise.statusCode}): {exercise.message}`</p>
+        </>
+    )
 
     return (
         <>

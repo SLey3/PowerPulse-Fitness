@@ -1,9 +1,12 @@
 'use client'
 
 
-import { executeToast } from '@/lib/utils'
+import { executeToast, createSonnerCookie } from '@/lib/utils'
+import type { ReturnApiType, TableDeleteReturnApiType } from '@/lib/actions/types'
 
 import React from 'react'
+import { unauthorized, useRouter, usePathname } from 'next/navigation'
+import { toast } from 'sonner'
 import {
     type ColumnDef,
     type ColumnFiltersState,
@@ -19,7 +22,7 @@ import {
     getSortedRowModel,
     useReactTable
 } from '@tanstack/react-table'
-import { ArrowRight, ArrowLeft, LucideTrash2 } from 'lucide-react'
+import { ArrowRight, ArrowLeft, LucideTrash2, Trash2 } from 'lucide-react'
 import Cookies from 'js-cookie'
 
 
@@ -93,10 +96,12 @@ export function createColumns<T extends { id: number }>(
                 },
                 cell: ({ row }: { row: Row<T>}) => {
                     const log = row.original
+                    const pathname = usePathname()
 
                     return (
                         <DeleteInterface 
                             api_url_path={del_api_path}
+                            cur_url={pathname}
                             item_id={log.id}
                             triggerBody={
                                 <div className="bg-inherit! translate-x-[25%]">
@@ -108,14 +113,25 @@ export function createColumns<T extends { id: number }>(
                 }
             }
         ])
-} 
+}
+
+interface DataTableArgs<TData, TValue> extends DataTableProps<TData, TValue> {
+    notfound: React.ReactElement;
+    postDeleteAllFunc: (token: string, cur_url: string) => Promise<TableDeleteReturnApiType<{confirmation: string}>>;
+    postDeleteManyFunc: (token: string, ids: number[], cur_url: string) => Promise<TableDeleteReturnApiType<{confirmation: string}>>;
+}
 
 
 export function DataTable<TData, TValue>({
     columns,
     data,
-    notfound
-}: DataTableProps<TData, TValue> & { notfound: React.ReactElement }) {
+    notfound,
+    postDeleteAllFunc,
+    postDeleteManyFunc
+}: DataTableArgs<TData, TValue>) {
+    const { refresh } = useRouter()
+    const pathname = usePathname()
+
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
@@ -140,6 +156,61 @@ export function DataTable<TData, TValue>({
 
     if (bread) {
         executeToast(bread)
+    }
+
+    async function executeSelectedRowDeletion(all: boolean) {
+        const selectedRows = table.getGroupedSelectedRowModel()
+        const goal_ids: number[] = []
+        const t = Cookies.get("t")
+
+        if (!t) {
+            unauthorized()
+        }
+
+        
+        if (all) {
+            const res = await postDeleteAllFunc(t, pathname)
+
+            if (typeof res !== 'undefined') {
+                if ('statusCode' in res || 'goalIds' in res) {
+                    toast.error(res.message)
+                } else if ('confirmation' in res) {
+                    createSonnerCookie({
+                        type: 'success',
+                        msg: res.confirmation
+                    })
+                }
+            } else {
+                toast.error("Something went wrong. Try again")
+            }
+        } else {
+            selectedRows.rows.forEach((row) => {
+                const { id } = row.original as { id: number; [key: string]: any }
+    
+                goal_ids.push(id)
+            })
+
+            const res = await postDeleteManyFunc(t, goal_ids, pathname)
+
+
+            console.log(res)
+
+
+            if (typeof res !== 'undefined') {
+                if ('statusCode' in res || 'goalIds' in res) {
+                    toast.error(res.message)
+                } else if ('confirmation' in res) {
+                    createSonnerCookie({
+                        type: 'success',
+                        msg: res.confirmation
+                    })
+                }
+            } else {
+                toast.error("Something went wrong. Try again")
+            }
+        }
+
+        refresh()
     }
 
     return (
@@ -210,6 +281,26 @@ export function DataTable<TData, TValue>({
                     <ArrowLeft className="size-4" />
                     Previous
                 </Button>
+                {(table.getIsSomeRowsSelected() || table.getIsAllPageRowsSelected()) ? (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onDoubleClick={() => executeSelectedRowDeletion(table.getIsAllRowsSelected())}
+                        disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+                    >
+                        <span className="sr-only">
+                            {table.getIsSomeRowsSelected()
+                                ? "Delete Selected Rows"
+                                : "Delete All Rows"
+                            }
+                        </span>
+                        <Trash2 className="size-4" />
+                        {table.getIsSomeRowsSelected()
+                            ? "Delete Selected Rows"
+                            : "Delete All Rows"
+                        }
+                    </Button>
+                ) : null}
                 <Button
                     variant="outline"
                     size="sm"

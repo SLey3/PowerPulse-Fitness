@@ -215,7 +215,7 @@ export default function ExerciseEditPage() {
                                                 <TableCell className="font-semibold">Moderate Intensity</TableCell>
                                                 <TableCell>
                                                     <ul className="list-['-']">
-                                                        <li>Brisk Walking</li>
+                                                        <li>Recreational Swimming</li>
                                                         <li>Stationary cycling</li>
                                                     </ul>
                                                 </TableCell>

@@ -15,13 +15,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { ExerciseProps } from '../types'
+import { GoalMainPageProps } from '../types'
 
 
 
-export const columns = createColumns<ExerciseProps>(
+export const columns = createColumns<GoalMainPageProps>(
     ({ row }) => {
-        const log = row.original
+        const goal = row.original
         const pathname = usePathname()
 
         return (
@@ -35,25 +35,24 @@ export const columns = createColumns<ExerciseProps>(
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(`${window.location.href}/view/${log.id}`)}
+                        onClick={() => navigator.clipboard.writeText(`${window.location.href}/view/${goal.id}`)}
                     >
-                        Copy Exercise Url
+                        Copy Goal Url
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <Link href={`${pathname}/view/${log.id}`} className="overflow-hidden text-ellipsis">
-                            View {log.name.length > 20 ? `${log.name.slice(0, 20)}...` : log.name}
+                        <Link href={`${pathname}/view/${goal.id}`} className="overflow-hidden text-ellipsis">
+                            View {goal.title.length > 20 ? `${goal.title.slice(0, 20)}...` : goal.title}
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem disabled={!log.custom} aria-disabled={!log.custom}>
+                    <DropdownMenuItem>
                         <Link
                             href={{
                                 pathname: `${pathname}/edit`,
-                                query: { id: log.id }
+                                query: { id: goal.id }
                             }}
-                            aria-disabled={!log.custom}
                         >
-                            Edit Exercise
+                            Edit Goal
                         </Link>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -63,7 +62,7 @@ export const columns = createColumns<ExerciseProps>(
     [
         {
             id: 'title',
-            accessorKey: 'name',
+            accessorKey: 'title',
             header: ({ column }) => {
                 return (
                     <Button
@@ -71,19 +70,31 @@ export const columns = createColumns<ExerciseProps>(
                         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                         className="cursor-pointer"
                     >
-                        Name
+                        Title
                         <ArrowUpDown className="ml-2 size-4" />
                     </Button>
                 )
             }
         },
         {
-            accessorKey: 'type',
-            header: 'Exercise Type'
+            accessorKey: 'createdAt',
+            header: 'Created At'
         },
         {
-            accessorKey: 'muscle',
-            header: 'Muscle'
+            accessorKey: 'updatedAt',
+            header: 'Updated At'
+        },
+        {
+            accessorKey: 'completeBy',
+            header: 'Complete By'
+        },
+        {
+            accessorKey: 'progress',
+            header: 'Current Progress (from 0-100)'
+        },
+        {
+            accessorKey: 'status',
+            header: 'Goal Status'
         },
         {
             id: 'create-btn',
@@ -103,6 +114,6 @@ export const columns = createColumns<ExerciseProps>(
             }
         }
     ],
-    "fitexercise",
-    "Exercise"
+    "fitgoals",
+    "Goal"
 )

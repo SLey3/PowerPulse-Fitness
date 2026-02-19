@@ -3,13 +3,13 @@ import {
     BadRequestException,
     NotFoundException,
     ForbiddenException,
-    ImATeapotException,
     InternalServerErrorException
 } from "@nestjs/common"
 import { PrismaService } from "src/prisma_m/prisma.service"
 import { Prisma, $Enums, type GoalStatus } from "generated/prisma"
 import { PrismaClientKnownRequestError } from "generated/prisma/runtime/client"
-import { CreateDto, UpdateDto, DeleteDto, DeleteManyDto } from "./dto"
+import { CreateDto, UpdateDto } from "./dto"
+import { DeleteDto, DeleteManyDto } from "src/utils/dtos"
 import dayjs from "dayjs"
 
 import { formatDto } from "src/utils"
@@ -110,7 +110,7 @@ export class FitGoalsService {
 
             return prismaResult ? {
                 statusLabels: statuslbl,
-                ...prismaResult
+                result: prismaResult
             } : {}
         } else {
             if (!opts) throw new BadRequestException("Options is a required parameter if not requesting all available parameters")
@@ -136,7 +136,7 @@ export class FitGoalsService {
                 "status" in prismaResult
                     ? {
                         statusLabels: statuslbl,
-                        ...prismaResult
+                        result: prismaResult
                     } : prismaResult
                 : {}
         }
@@ -279,48 +279,64 @@ export class FitGoalsService {
     }
 
     async deleteManyGoals(deleteManyDto: DeleteManyDto, userId: number) {
-        const totalCountAfterDel = await this.prisma.fitnessGoal.count({
-            where: {
-                id: {
-                    notIn: deleteManyDto.ids
-                },
-                userId: userId
-            }
-        })
 
-        const { count: delCount } = await this.prisma.fitnessGoal.deleteMany({
-            where: {
-                id: {
-                    in: deleteManyDto.ids
-                },
-                userId: userId
+        try {
+            const { count: delCount } = await this.prisma.exercises.deleteMany({
+                where: {
+                    id: {
+                        in: deleteManyDto.ids
+                    },
+                    userId: userId
+                }
+            })
+    
+            if (delCount === deleteManyDto.ids.length) {
+                return {"confirmation": "Requested goals have been deleted!"}
             }
-        })
+    
+            throw new InternalServerErrorException({
+                goalIds: deleteManyDto.ids,
+                msg: "Something wrong has occurred. Please try again later."
+            })
+        }  catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException('Operation failed: No records found to delete')
+                }
 
-        if (delCount === totalCountAfterDel) {
-            return {"success": "Requested goals have been deleted!"}
+                throw new BadRequestException(error.message, {
+                    cause: error.cause,
+                    description: error.code
+                })
+            }
+
+            throw new Error(error)
         }
-
-        throw new InternalServerErrorException({
-            goalIds: deleteManyDto.ids,
-            msg: "Something wrong has occurred. Please try again later."
-        })
     }
 
     async deleteAll(userId: number) {
-        const totalGoals = await this.prisma.fitnessGoal.count({
-            where: { userId: userId }
-        })
+        try {            
+            await this.prisma.fitnessGoal.deleteMany({
+                where: {
+                    userId: userId
+                }
+            })
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException('Operation failed: No records found to delete')
+                }
 
-        const { count } = await this.prisma.fitnessGoal.deleteMany({
-            where: { userId: userId }
-        })
+                throw new BadRequestException(error.message, {
+                    cause: error.cause,
+                    description: error.code
+                })
+            }
 
-        if (count === totalGoals) {
-            return {"success": "All goals have been deleted!"}
+            throw new Error(error)
         }
 
-        throw new ImATeapotException("Either no goals have been created or something wrong has occurred")
+        return {"confirmation": "All Exercises have been deleted!"}
     }
 
 

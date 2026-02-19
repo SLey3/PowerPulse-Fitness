@@ -11,6 +11,7 @@ import {
     ParseIntPipe
 } from '@nestjs/common'
 import { Prisma } from 'generated/prisma/client'
+import { DeleteManyDto } from 'src/utils/dtos'
 import { AuthGuard } from 'src/auth/guards/auth.guard'
 import { GetUser } from 'src/decorator'
 import { FitexerciseService } from './fitexercise.service'
@@ -75,7 +76,13 @@ export class FitexerciseController {
     }
 
     @UseGuards(AuthGuard)
-    @Delete()
+    @Delete('del/m')
+    deleteMany(@Body() deleteManyDto: DeleteManyDto, @GetUser('id') userId: number) {
+        return this.fitExcerciseService.deleteManyExercises(deleteManyDto, userId)
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete("del/m/a")
     deleteAll(@GetUser('id') userId: number) {
         return this.fitExcerciseService.deleteAll(userId)
     }

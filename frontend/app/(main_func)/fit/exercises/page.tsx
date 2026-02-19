@@ -1,7 +1,8 @@
-import { getExercises } from "@/lib/actions"
+import { getExercises, postFitExerciseDeleteAll, postFitExerciseDeleteMany } from "@/lib/actions"
 import { determineFetchedList } from "@/lib/utils"
 import { Suspense } from "react"
 import { cookies } from "next/headers"
+import { unauthorized } from "next/navigation"
 
 import { DataTable } from "@/components/ui/data-table"
 import { columns } from "./data-table/columns"
@@ -9,11 +10,16 @@ import { TableNotFound } from "./data-table/data-not-found"
 import Loading from "./loading"
 
 
-export default async function LogsHomePage() {
+export default async function ExercisesHomePage() {
     const cookieStore = await cookies()
     const token = cookieStore.get("t")?.value
-
-    const exercises = await getExercises(token!)
+    let exercises
+    
+        if (token) {
+            exercises = await getExercises(token)
+        } else {
+            unauthorized()
+        }
     
     const determinedExercises = determineFetchedList(exercises)
 
@@ -28,6 +34,8 @@ export default async function LogsHomePage() {
                         notfound={(
                             <TableNotFound columns={columns} />
                         )}
+                        postDeleteAllFunc={postFitExerciseDeleteAll}
+                        postDeleteManyFunc={postFitExerciseDeleteMany}
                         />
                 </Suspense>
             </div>

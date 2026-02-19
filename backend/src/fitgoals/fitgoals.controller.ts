@@ -12,12 +12,14 @@ import {
     ParseIntPipe
 } from "@nestjs/common"
 
+import { DeleteDto, DeleteManyDto } from "src/utils/dtos"
+
 import { Prisma } from "generated/prisma"
 
 import { AuthGuard } from "src/auth/guards/auth.guard"
 import { GetUser } from "src/decorator"
 import { FitGoalsService } from "./fitgoals.service"
-import { CreateDto, UpdateDto, DeleteDto, DeleteManyDto, AnalyticsDto } from "./dto"
+import { CreateDto, UpdateDto, AnalyticsDto } from "./dto"
 
 
 @Controller('fitgoals')

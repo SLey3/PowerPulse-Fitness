@@ -5,12 +5,13 @@ import axios, { type AxiosResponse, type AxiosError } from 'axios'
 import type { LogsFindAllProps } from '@/app/(main_func)/fit/logs/types'
 import type { ExerciseExcerptProps, ExerciseProps } from '@/app/(main_func)/fit/exercises/types'
 import type { CategoriesProps } from '@/app/(main_func)/fit/exercises/cat/types'
-import { ApiErrProps } from './types'
+import type { GoalMainPageProps } from '@/app/(main_func)/fit/goals/types'
+import { ApiErrProps, ReturnApiType } from './types'
 
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
-type ReturnApiType<P> = Promise<P | ApiErrProps | undefined>
+
 
 export async function getExercises(token: string): ReturnApiType<ExerciseProps[]> {
     "use cache"
@@ -64,6 +65,25 @@ export async function getExercisesExcerpt(token: string): ReturnApiType<Exercise
     })
     .then((res: AxiosResponse<ExerciseExcerptProps[] | undefined>) => {
         return res.data
+    })
+    .catch((err: AxiosError<ApiErrProps>) => {
+        return err.response?.data
+    })
+}
+
+export async function getGoalsHomePage(token: string): ReturnApiType<GoalMainPageProps[]> {
+    "use cache"
+    return axios.get(
+        `${API_URL}/fitgoals`,
+        {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+    )
+    .then((res: AxiosResponse<(GoalMainPageProps & { subgoals: any })[]>) => {
+        const props = res.data.map(({ subgoals, ...rest }) => rest)
+        return props
     })
     .catch((err: AxiosError<ApiErrProps>) => {
         return err.response?.data

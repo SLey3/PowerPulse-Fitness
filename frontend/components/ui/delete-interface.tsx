@@ -1,12 +1,12 @@
 'use client'
 
+import { DeleteInterfaceYesResponse } from "@/lib/actions"
+
 import { useRouter } from "next/navigation"
 import  { useState, type ReactNode } from "react"
 import Cookies from "js-cookie"
-import axios, { type AxiosResponse } from "axios"
 import { toast } from "sonner"
 
-import { createSonnerCookie } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,15 +19,16 @@ import {
 } from "@/components/ui/dialog"
 import { Spinner } from "./spinner"
 
-
 export function DeleteInterface({ 
     api_url_path,
+    cur_url,
     item_id,
     triggerBody,
     create_cookie
  }: 
  {
     api_url_path: string,
+    cur_url: string,
     item_id: number,
     triggerBody: ReactNode,
     create_cookie?: boolean
@@ -37,45 +38,37 @@ export function DeleteInterface({
     const baseApiURL = process.env.NEXT_PUBLIC_BACKEND_URL
     const apiToken = Cookies.get("t")
 
-    if (!apiToken) {
+    if (!apiToken || !baseApiURL) {
         toast.error("An unexpected error occurred. Please log in again.")
         return
     }
 
-    const onYes = () => {
+    const onYes = async () => {
         setIsProcessing(true)
 
-        axios.delete(`${baseApiURL}/${api_url_path}/${item_id}`, {
-                headers: {
-                    'Authorization': `Bearer ${apiToken}`
-                }
-        })
-        .then((res: AxiosResponse<{ confirmation: string }>) => {
-            if (create_cookie) {
-                createSonnerCookie({
-                    type: 'success',
-                    msg: res.data.confirmation
-                })
-            } else {
-                toast.success(res.data.confirmation)
-            }
 
-            setIsProcessing(false)
-            refresh()
+        const res: { type: string, msg: string } = await DeleteInterfaceYesResponse({
+            cur_url: cur_url,
+            baseApiURL: baseApiURL,
+            api_url_path: api_url_path,
+            apiToken: apiToken,
+            item_id: item_id,
+            create_cookie: create_cookie
         })
-        .catch(() => {
-            if (create_cookie) {
-                createSonnerCookie({
-                    type: 'err',
-                    msg: 'An unexpected error occurred!'
-                })
-            } else {
-                toast.error("An unexpected error occurred!")
-            }
 
-            setIsProcessing(false)
-            refresh()
-        })
+        if (res.type === "success") {
+            toast.success("Success", {
+                description: res.msg
+            })
+        } else {
+            toast.error("An Error has Occurred!", {
+                dismissible: false,
+                description: res.msg
+            })
+        }
+
+        setIsProcessing(false)
+        refresh()
     }
 
     return (

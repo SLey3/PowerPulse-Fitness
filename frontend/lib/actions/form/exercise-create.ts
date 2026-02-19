@@ -2,6 +2,7 @@
 
 import formSchema from "@/lib/schemas/exercise"
 import { cookies } from "next/headers"
+import { revalidatePath } from "next/cache"
 import axios, {type AxiosResponse, type AxiosError} from "axios"
 import { z } from "zod"
 
@@ -21,6 +22,8 @@ export async function ec_submit_request(values: z.infer<typeof formSchema>) {
             }
         }
     ).then((res: AxiosResponse<{ created: string }>) => {
+        revalidatePath("/fit/exercises")
+
         return res.data
     }).catch((err: AxiosError<ApiErrProps>) => {
         return err.response?.data
