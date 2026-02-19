@@ -128,8 +128,15 @@ export async function getCategory(token: string | undefined, cid: number | strin
         throw new Error('Did not find required URL Parameter "cid"')
     }
 
+    const safeCid = String(cid).trim()
+    // Allow only numeric category IDs to avoid SSRF/path manipulation via the URL path
+    const cidPattern = /^[0-9]+$/
+    if (!cidPattern.test(safeCid)) {
+        throw new Error('Invalid category id format')
+    }
+
     return await axios.get(
-        `${API_URL}/fitcat/${cid}`,
+        `${API_URL}/fitcat/${safeCid}`,
         {
             headers: {
                 'Authorization': `Bearer ${token}`
