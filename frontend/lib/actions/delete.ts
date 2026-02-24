@@ -1,7 +1,7 @@
 'use server'
 
 import { createSonnerCookie } from '../utils'
-import { ApiErrProps, ReturnApiType } from './types'
+import { ApiErrProps, TableDeleteReturnApiType } from './types'
 
 import { revalidatePath } from 'next/cache'
 import axios, { type AxiosResponse, type AxiosError } from 'axios'
@@ -47,20 +47,28 @@ async function DeleteMany(token: string, ids: number[], section: string, cur_url
     })
 }
 
-export async function postFitGoalDeleteAll(token: string, cur_url: string): Promise<ReturnApiType<{confirmation: string}>> {
+export async function postFitGoalDeleteAll(token: string, cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
     return await DeleteAll(token, "fitgoals", cur_url)
 }
 
-export async function postFitGoalDeleteMany(token: string, goalIds: number[], cur_url: string): Promise<ReturnApiType<{confirmation: string}>> {
+export async function postFitGoalDeleteMany(token: string, goalIds: number[], cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
     return await DeleteMany(token, goalIds, "fitgoals", cur_url)
 }
 
-export async function postFitExerciseDeleteAll(token: string, cur_url: string): Promise<ReturnApiType<{confirmation: string}>> {
+export async function postFitExerciseDeleteAll(token: string, cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
     return await DeleteAll(token, "fitexercise", cur_url)
 }
 
-export async function postFitExerciseDeleteMany(token: string, exerciseIds: number[], cur_url: string): Promise<ReturnApiType<{confirmation: string}>> {
+export async function postFitExerciseDeleteMany(token: string, exerciseIds: number[], cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
     return await DeleteMany(token, exerciseIds, "fitexercise", cur_url)
+}
+
+export async function postFitCategoriesDeleteAll(token: string, cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
+    return await DeleteAll(token, "fitcat", cur_url)
+}
+
+export async function postFitCategoriesDeleteMany(token: string, categoryIds: number[], cur_url: string): Promise<TableDeleteReturnApiType<{confirmation: string}>> {
+    return await DeleteMany(token, categoryIds, "fitcat", cur_url)
 }
 
 

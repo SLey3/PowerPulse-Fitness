@@ -1,5 +1,6 @@
 import { getExercises, postFitExerciseDeleteAll, postFitExerciseDeleteMany } from "@/lib/actions"
 import { determineFetchedList } from "@/lib/utils"
+
 import { Suspense } from "react"
 import { cookies } from "next/headers"
 import { unauthorized } from "next/navigation"

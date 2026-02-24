@@ -47,17 +47,19 @@ export default function CreateCategory() {
     if (error) return 'An unexpected error occurred. If this persists, contact support.'
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const res = await ex_cat_submit_request(values, data!.id)
+        if (data && !('statusCode' in data)) {
+            const res = await ex_cat_submit_request(values, data.id)
 
-        if ('statusCode' in res) {
-            toast.error("An unexpected error occurred!")
-        } else {
-            createSonnerCookie({
-                type: 'success',
-                msg: "Category Created Successfully"
-            })    
-        
-            router.push('.')
+            if ('statusCode' in res) {
+                toast.error("An unexpected error occurred!")
+            } else {
+                createSonnerCookie({
+                    type: 'success',
+                    msg: "Category Created Successfully"
+                })    
+            
+                router.push('.')
+            }
         }
     }
 

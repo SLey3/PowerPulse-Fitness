@@ -172,14 +172,16 @@ export function DataTable<TData, TValue>({
             const res = await postDeleteAllFunc(t, pathname)
 
             if (typeof res !== 'undefined') {
-                if ('statusCode' in res || 'goalIds' in res) {
-                    toast.error(res.message)
-                } else if ('confirmation' in res) {
+                if ('confirmation' in res) {
                     createSonnerCookie({
                         type: 'success',
                         msg: res.confirmation
                     })
                 }
+
+                if ('statusCode' in res || 'goalIds' in res) {
+                    toast.error(res.message)
+                } 
             } else {
                 toast.error("Something went wrong. Try again")
             }
@@ -197,14 +199,16 @@ export function DataTable<TData, TValue>({
 
 
             if (typeof res !== 'undefined') {
-                if ('statusCode' in res || 'goalIds' in res) {
-                    toast.error(res.message)
-                } else if ('confirmation' in res) {
+                if ('confirmation' in res) {
                     createSonnerCookie({
                         type: 'success',
                         msg: res.confirmation
                     })
                 }
+
+                if ('statusCode' in res || 'goalIds' in res) {
+                    toast.error(res.message)
+                } 
             } else {
                 toast.error("Something went wrong. Try again")
             }

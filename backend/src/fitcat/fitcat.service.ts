@@ -1,6 +1,7 @@
-import { Injectable, ForbiddenException, ImATeapotException } from '@nestjs/common'
+import { Injectable, ForbiddenException, ImATeapotException, InternalServerErrorException, BadRequestException } from '@nestjs/common'
 import { PrismaClientKnownRequestError } from 'generated/prisma/runtime/client'
 import { PrismaService } from 'src/prisma_m/prisma.service'
+import { DeleteManyDto } from 'src/utils/dtos'
 import { CategoryDto, UpdateCategoryDto } from './dto'
 
 @Injectable()
@@ -97,17 +98,64 @@ export class FitcatService {
         return {"confirmation": `Workout category with name ${name} has been deleted!`};
     }
 
-    async deleteAll(uid: number) {
-        const res = await this.prisma.workoutCategory.deleteMany({
-            where: {
-                userId: uid
-            }
-        });
+    async deleteManyCategories(deleteManyDto: DeleteManyDto, userId: number) {
 
-        if (res.count > 0) {
-            return {"success": "Deleted All workout categories"}
+        try {
+            const { count: delCount } = await this.prisma.workoutCategory.deleteMany({
+                where: {
+                    id: {
+                        in: deleteManyDto.ids
+                    },
+                    userId: userId
+                }
+            })
+    
+            if (delCount === deleteManyDto.ids.length) {
+                return {"confirmation": "Requested categories have been deleted!"}
+            }
+    
+            throw new InternalServerErrorException({
+                goalIds: deleteManyDto.ids,
+                msg: "Something wrong has occurred. Please try again later."
+            })
+        }  catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException('Operation failed: No records found to delete')
+                }
+
+                throw new BadRequestException(error.message, {
+                    cause: error.cause,
+                    description: error.code
+                })
+            }
+
+            throw new Error(error)
+        }
+    }
+
+    async deleteAll(uid: number) {
+        try {            
+            await this.prisma.workoutCategory.deleteMany({
+                where: {
+                    userId: uid
+                }
+            })
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new BadRequestException('Operation failed: No records found to delete')
+                }
+
+                throw new BadRequestException(error.message, {
+                    cause: error.cause,
+                    description: error.code
+                })
+            }
+
+            throw new Error(error)
         }
 
-        throw new ImATeapotException("No workout categories to delete");
+        return {"confirmation": "All Categories have been deleted!"}
     }
 }

@@ -2,6 +2,8 @@
 
 import formSchema from "@/lib/schemas/categories"
 import type { ApiErrProps } from "@/lib/actions/types"
+
+import { revalidatePath } from "next/cache"
 import { cookies } from "next/headers"
 import { unauthorized } from "next/navigation"
 import axios, { type AxiosResponse, type AxiosError } from "axios"
@@ -30,6 +32,8 @@ export async function ex_cat_submit_request(values: z.infer<typeof formSchema>, 
             }
         }
     ).then(( res: AxiosResponse<{ message: string }> ) => {
+        revalidatePath("/fit/exercises/cat")
+
         return res.data
     }).catch((err: AxiosError<ApiErrProps>) => {
         return err.response?.data

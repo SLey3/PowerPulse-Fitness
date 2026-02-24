@@ -21,6 +21,8 @@ export default async function ViewExercise({
     const { id } = await params;
     const exercise = await getExercise(token?.value, id)
 
+    const BASE_CLASS = "space-y-3 rounded-md line-clamp-3 shadow-black"
+
     if (!exercise) return (
         <>
         <div className="container mx-auto px-4 py-8">
@@ -45,8 +47,8 @@ export default async function ViewExercise({
 
     return (
         <>
-            <div className="container mx-auto px-4 py-8">
-                <div className="border-2 bg-white font-medium text-black shadow-lg shadow-slate-100/50 h-auto max-sm:w-1/2 p-10 rounded-md space-y-8">
+            <div className="flex items-center justify-center min-h-screen min-w-screen px-4 py-8">
+                <div className="w-full max-w-4xl border-2 bg-white font-medium text-black shadow-lg shadow-slate-100/50 h-auto p-6 sm:p-10 rounded-md space-y-8">
                     <div>
                         <Link href="..">
                             <Button variant="link" className="text-black">
@@ -54,13 +56,22 @@ export default async function ViewExercise({
                             </Button>
                         </Link>
                     </div>
-                    <div className="grid grid-cols-2 gap-y-5 gap-x-20 justify-items-center">
+                    <div className="grid shadow-2xl grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-20 py-5 justify-items-center">
                         <motion.div 
                             id="name"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md line-clamp-3 shadow-black hover:shadow-2xl hover:p-2 hover:line-clamp-none hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -74,9 +85,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="custom"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -92,9 +112,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="use-count"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="col-span-2 space-y-3 rounded-md text-center shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={`sm:col-span-2 ${BASE_CLASS}`}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -110,9 +139,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="type"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -126,9 +164,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="equipment"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -142,9 +189,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="muscle"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -158,9 +214,18 @@ export default async function ViewExercise({
                         <motion.div 
                             id="met"
                             initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="space-y-3 rounded-md shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            whileHover={{ 
+                                scale: 1.2,
+                                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                webkitBoxOrient: 'horizontal',
+                                webkitLineClamp: 'unset',
+                                display: 'block',
+                                overflow: 'visible',
+                                padding: '0.5rem',
+                                backgroundColor: "#fff"
+                            }}
+                            transition={{ type: 'spring', delay: 0.5 }}
+                            className={BASE_CLASS}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -171,12 +236,9 @@ export default async function ViewExercise({
                                 {exercise.met}
                             </div>
                         </motion.div>
-                        <motion.div 
+                        <div 
                             id="note"
-                            initial={false}
-                            whileHover={{ scale: 1.2 }}
-                            transition={{ type: 'spring', duration: 1.8 }}
-                            className="col-span-2 space-y-3 rounded-md text-center shadow-black hover:shadow-2xl hover:p-2 hover:bg-white"
+                            className={`sm:col-span-2 text-center py-2.5 ${BASE_CLASS}`}
                         >
                             <div>
                                 <p className="font-bold underline underline-offset-4">
@@ -191,7 +253,7 @@ export default async function ViewExercise({
                                     }
                                 </p>
                             </div>
-                        </motion.div> 
+                        </div> 
                     </div>
                 </div>
             </div>

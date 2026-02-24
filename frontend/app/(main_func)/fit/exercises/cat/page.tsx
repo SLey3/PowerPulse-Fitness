@@ -1,4 +1,5 @@
-import { getCategories } from "@/lib/actions"
+import { getCategories, postFitCategoriesDeleteAll, postFitCategoriesDeleteMany } from "@/lib/actions"
+
 import { determineFetchedList } from "@/lib/utils"
 import { Suspense } from "react"
 import { cookies } from "next/headers"
@@ -26,6 +27,8 @@ export default async function ExerciseCategoriesHomePage() {
                         notfound={(
                             <TableNotFound columns={columns} />
                         )}
+                        postDeleteAllFunc={postFitCategoriesDeleteAll}
+                        postDeleteManyFunc={postFitCategoriesDeleteMany}
                     />
                 </Suspense>
             </div>

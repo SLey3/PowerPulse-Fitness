@@ -73,7 +73,7 @@ export const columns = createColumns<CategoriesProps>(
                         className="cursor-pointer"
                     >
                         <Link href={`${pathname}/create`}>
-                            <Plus className="size-4" /> Create Exercise
+                            <Plus className="size-4" /> Create Exercise Category
                         </Link>
                     </Button>
                 )

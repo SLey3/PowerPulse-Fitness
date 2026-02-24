@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from 'src/auth/guards/auth.guard'
 import { GetUser } from 'src/decorator'
+import { DeleteDto, DeleteManyDto } from "src/utils/dtos"
 import { FitcatService } from './fitcat.service'
 import { CategoryDto, UpdateCategoryDto } from './dto'
 
@@ -49,7 +50,13 @@ export class FitcatController {
     }
 
     @UseGuards(AuthGuard)
-    @Delete('all')
+    @Delete('del/m')
+    deleteMany(@Body() deleteManyDto: DeleteManyDto, @GetUser('id') userId: number) {
+        return this.fitcatService.deleteManyCategories(deleteManyDto, userId)
+    }
+
+    @UseGuards(AuthGuard)
+    @Delete('del/m/a')
     deleteAllCat(@GetUser('id') userId: number) {
         return this.fitcatService.deleteAll(userId)
     }
