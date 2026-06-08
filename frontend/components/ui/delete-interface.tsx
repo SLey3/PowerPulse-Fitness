@@ -84,7 +84,7 @@ export function DeleteInterface({
                             This will permanently delete the selected item.
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="flex flex-row justify-evenly p-3">
+                    <div className="flex flex-row p-3 justify-evenly">
                         <div>
                             <DialogClose asChild>
                                 <Button

@@ -1,37 +1,39 @@
 import {
-    IsOptional,
-    IsAlphanumeric,
-    IsEmail, 
-    IsPhoneNumber, 
-    IsStrongPassword
-} from 'class-validator'
+  IsOptional,
+  IsAlphanumeric,
+  IsEmail,
+  IsPhoneNumber,
+  IsStrongPassword,
+  IsEnum,
+} from 'class-validator';
+import { unitPref } from '@/src/utils/enums';
 
 export class EditUserDto {
+  @IsOptional()
+  @IsAlphanumeric()
+  firstName?: string;
 
-    @IsOptional()
-    @IsAlphanumeric()
-    firstName?: string
+  @IsOptional()
+  @IsAlphanumeric()
+  lastName?: string;
 
-    @IsOptional()
-    @IsAlphanumeric()
-    lastName?: string
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
-    @IsOptional()
-    @IsEmail()
-    email?: string
+  @IsOptional()
+  @IsStrongPassword()
+  password?: string;
 
-    @IsOptional()
-    @IsStrongPassword()
-    password?: string
+  @IsOptional()
+  @IsOptional()
+  @IsPhoneNumber()
+  phone?: string;
 
-    @IsOptional()
-    @IsOptional()
-    @IsPhoneNumber()
-    phone?: string
+  @IsOptional()
+  weight?: number;
 
-    @IsOptional()
-    weight?: number
-
-    @IsOptional()
-    unitPref?: 'lbs' | 'kg'
+  @IsOptional()
+  @IsEnum(unitPref)
+  unitPref?: unitPref;
 }

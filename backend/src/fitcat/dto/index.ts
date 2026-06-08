@@ -1,1 +1,1 @@
-export * from './cat.dto'
+export * from './cat.dto';

@@ -1,8 +1,13 @@
 import type { MakeOptional } from "../utils/types";
 
+
+export interface ValidationErr {
+    field: string;
+    error: string;
+}
 export interface ApiErrProps {
     statusCode: number;
-    message: string;
+    message: string | ValidationErr[];
 }
 
 export interface TableDeleteApiErrProps extends MakeOptional<ApiErrProps, "statusCode"> {

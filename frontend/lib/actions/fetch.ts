@@ -1,13 +1,13 @@
 'use server'
 
 import { unauthorized } from 'next/navigation'
+import { cacheTag } from 'next/cache'
 import axios, { type AxiosResponse, type AxiosError } from 'axios'
 import type { LogsFindAllProps } from '@/app/(main_func)/fit/logs/types'
 import type { ExerciseExcerptProps, ExerciseProps } from '@/app/(main_func)/fit/exercises/types'
 import type { CategoriesProps } from '@/app/(main_func)/fit/exercises/cat/types'
 import type { GoalMainPageProps } from '@/app/(main_func)/fit/goals/types'
 import { ApiErrProps, ReturnApiType } from './types'
-
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -80,6 +80,9 @@ export async function getExercisesExcerpt(token: string): ReturnApiType<Exercise
 
 export async function getGoalsHomePage(token: string): ReturnApiType<GoalMainPageProps[]> {
     "use cache"
+
+    cacheTag('fitgoals')
+
     return axios.get(
         `${API_URL}/fitgoals`,
         {

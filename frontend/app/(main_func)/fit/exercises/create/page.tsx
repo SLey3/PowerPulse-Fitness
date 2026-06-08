@@ -5,7 +5,6 @@ import { ec_submit_request } from "@/lib/actions/form/exercise-create"
 import formSchema from "@/lib/schemas/exercise"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React from "react"
 import { useQuery } from '@tanstack/react-query'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from 'react-hook-form'

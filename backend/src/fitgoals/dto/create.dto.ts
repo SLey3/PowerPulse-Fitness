@@ -1,42 +1,73 @@
-import { 
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    IsJSON,
-    Length,
-    IsISO8601,
-    ValidateNested
-} from "class-validator"
-import { Type } from "class-transformer"
-import { Contains } from "src/utils/validators"
-import { TimeGt } from "src/utils/validators/times"
-import SubGoalsDto from "./subgoals.dto"
-
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsEnum,
+  Length,
+  MinLength,
+  IsISO8601,
+  ValidateNested,
+  IsNumber,
+  IsPositive,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { MeasurementUnits, DistanceUnits, Status } from '@/src/utils/enums';
+import { TimeGt } from '@/src/utils/validators/times';
 
 export class CreateDto {
-    @IsNotEmpty()
-    @IsString()
-    @Length(3, 20)
-    title: string;
+  @IsNotEmpty()
+  @IsString()
+  @Length(3, 99)
+  title: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @Length(15, 45)
-    description: string;
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(11, {
+    message: 'Description should be more than 10 characters',
+  })
+  description: string;
 
-    @IsNotEmpty()
-    @IsISO8601({ strict: true })
-    @TimeGt({ strict: true }, { message: "Complete By Date must be after Today's date"})
-    completeBy: string;
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  weightLoss?: number;
 
-    @IsOptional()
-    @IsString()
-    @Contains(Promise.all(['DEFAULT', 'NOT_STARTED', 'IN_PROGRESS']))
-    status?: string;
+  @IsOptional()
+  @IsEnum(MeasurementUnits)
+  weightLossUnit?: MeasurementUnits;
 
-    @IsOptional()
-    @IsJSON()
-    @ValidateNested({ each: true })
-    @Type(() => SubGoalsDto)
-    subgoals?: SubGoalsDto[];
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  calorieBurn?: number;
+
+  @IsOptional()
+  @IsEnum(MeasurementUnits)
+  calorieBurnUnit?: MeasurementUnits;
+
+  @IsOptional()
+  @IsNumber()
+  @IsPositive()
+  distance?: number;
+
+  @IsOptional()
+  @IsEnum(DistanceUnits)
+  distanceUnit?: DistanceUnits;
+
+  @IsNotEmpty()
+  @IsISO8601({ strict: true })
+  @TimeGt(
+    { strict: true },
+    { message: "Complete By Date must be after Today's date" },
+  )
+  completeBy: string;
+
+  @IsOptional()
+  @IsEnum(Status)
+  status?: Status;
+
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => CreateDto)
+  subgoals?: CreateDto[];
 }

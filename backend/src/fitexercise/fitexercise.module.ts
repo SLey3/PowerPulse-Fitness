@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common'
-import { FitexerciseController } from './fitexercise.controller'
-import { FitexerciseService } from './fitexercise.service'
+import { Module } from '@nestjs/common';
+import { FitexerciseController } from './fitexercise.controller';
+import { FitexerciseService } from './fitexercise.service';
 
 @Module({
   controllers: [FitexerciseController],
-  providers: [FitexerciseService]
+  providers: [FitexerciseService],
+  exports: [FitexerciseService],
 })
 export class FitexerciseModule {}

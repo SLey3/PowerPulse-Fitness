@@ -22,7 +22,9 @@ model User {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   weight            Float // will be stored in kg
-  unitPref          String            @default("kg") // User display calculations unit preference (how calculation results appear to the user in the frontend)
+  height            Float
+  bmi               Float
+  unitPref          UserUnitPreference            @default(METRIC) // User display calculations unit preference (how calculation results appear to the user in the frontend)
   workoutLogs       WorkoutLog[]
   workoutTemplates  WorkoutTemplate[]
   fitnessGoals      FitnessGoal[]
@@ -75,6 +77,9 @@ model FitnessGoal {
   updatedAt     DateTime   @updatedAt
   title         String     @unique
   description   String     @unique
+  weightLoss    Int? // stored in kg
+  calorieBurn   Int? // stored in kg
+  distance      Int? // stored in km
   completeBy    DateTime
   daysRemaining Int
   progress      Float      @default(0.0)
@@ -108,4 +113,9 @@ enum GoalStatus {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum UserUnitPreference {
+  IMPERIAL
+  METRIC
 }

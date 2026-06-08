@@ -89,7 +89,7 @@ export function MultiSelect({
       </div>
       <div className="relative mt-2">
         {open && selectables.length > 0 ? (
-          <div className="absolute top-0 z-10 w-full border rounded-md shadow-md outline-none bg-popover text-popover-foreground animate-in">
+          <div className="absolute top-0 z-10 w-full border shadow-md outline-none rounded-md bg-popover text-popover-foreground animate-in">
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup className="h-full overflow-auto">

@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common'
-import * as compendium from 'src/compendium'
+import { Injectable } from '@nestjs/common';
+import * as compendium from '@/src/compendium';
 
 @Injectable()
 export class CompendiumMService {
-    constructor() {}
+  constructor() {}
 
-    findAll() {
-        return compendium.getCompendium()
-    }
+  findAll() {
+    return compendium.getCompendium();
+  }
 
-    findTypes() {
-        return compendium.getTypes()
-    }
+  findTypes() {
+    return compendium.getTypes();
+  }
 
-    findNames() {
-        return compendium.getNames()
-    }
+  findNames() {
+    return compendium.getNames();
+  }
 
-    findMET(type: string, name: string) {
-        return compendium.getMET(type, name)
-    }
+  findMET(type: string, name: string) {
+    return compendium.getMET(type, name);
+  }
 }

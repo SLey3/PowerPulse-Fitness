@@ -1,8 +1,8 @@
 'use client'
 
 
-import { executeToast, createSonnerCookie } from '@/lib/utils'
-import type { ReturnApiType, TableDeleteReturnApiType } from '@/lib/actions/types'
+import { executeToast, createSonnerCookie, formatItemsCrUpdCbDate } from '@/lib/utils'
+import type { TableDeleteReturnApiType } from '@/lib/actions/types'
 
 import React from 'react'
 import { unauthorized, useRouter, usePathname } from 'next/navigation'
@@ -24,7 +24,7 @@ import {
 } from '@tanstack/react-table'
 import { ArrowRight, ArrowLeft, LucideTrash2, Trash2 } from 'lucide-react'
 import Cookies from 'js-cookie'
-
+import dayjs from 'dayjs'
 
 import {
     Table,
@@ -38,6 +38,7 @@ import { DeleteInterface } from './delete-interface'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Progress } from '@/components/ui/progress'
 
 
 
@@ -105,7 +106,7 @@ export function createColumns<T extends { id: number }>(
                             item_id={log.id}
                             triggerBody={
                                 <div className="bg-inherit! translate-x-[25%]">
-                                    <LucideTrash2 className="size-3 cursor-pointer text-red-400 hover:brightness-75" />
+                                    <LucideTrash2 className="text-red-400 cursor-pointer size-3 hover:brightness-75" />
                                 </div>
                             }
                         />
@@ -152,6 +153,7 @@ export function DataTable<TData, TValue>({
             rowSelection
         },
     });
+    const usertz = dayjs.tz.guess()
     const bread = Cookies.get('bread')
 
     if (bread) {
@@ -180,7 +182,7 @@ export function DataTable<TData, TValue>({
                 }
 
                 if ('statusCode' in res || 'goalIds' in res) {
-                    toast.error(res.message)
+                    toast.error(res.message as string)
                 } 
             } else {
                 toast.error("Something went wrong. Try again")
@@ -207,7 +209,7 @@ export function DataTable<TData, TValue>({
                 }
 
                 if ('statusCode' in res || 'goalIds' in res) {
-                    toast.error(res.message)
+                    toast.error(res.message as string)
                 } 
             } else {
                 toast.error("Something went wrong. Try again")
@@ -256,14 +258,68 @@ export function DataTable<TData, TValue>({
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell 
-                                            key={cell.id}
-                                            className="text-white"
-                                        >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
+                                    {row.getVisibleCells().map((cell) => {
+                                        if (cell.column.id) {
+                                            switch (cell.column.id) {
+                                                case "createdAt":
+                                                    return (
+                                                        <TableCell 
+                                                            key={cell.id}
+                                                            className="text-white"
+                                                        >
+                                                            <p>{formatItemsCrUpdCbDate(cell.getValue() as string, "createdAt")}</p>
+                                                        </TableCell>
+                                                    )
+                                                case "updatedAt":
+                                                    return (
+                                                        <TableCell 
+                                                            key={cell.id}
+                                                            className="text-white"
+                                                        >
+                                                            <p>{formatItemsCrUpdCbDate(cell.getValue() as string, "updatedAt")}</p>
+                                                        </TableCell>                                                        
+                                                    )
+
+                                                case "completeBy":
+                                                    const progressCell = cell.row.getAllCells().filter(cell => {
+                                                        const header = cell.column.columnDef.header
+
+                                                        if (header) {
+                                                            return header.toString().includes("Progress")
+                                                        }
+                                                    })[0]
+
+                                                    return (
+                                                        <TableCell
+                                                            key={cell.id}
+                                                            className="text-white"
+                                                        >
+                                                            <p>{progressCell.getValue() as number === 100 
+                                                                    ? "\u2714" 
+                                                                    : formatItemsCrUpdCbDate(cell.getValue() as string, "completeBy")}</p>
+                                                        </TableCell>
+                                                    )
+                                                case "progress":
+                                                    return (
+                                                        <TableCell 
+                                                            key={cell.id}
+                                                            className="min-w-[50%] w-full"
+                                                        >
+                                                            <Progress classNameIndicator="bg-amber-400" value={cell.getValue() as number} />
+                                                        </TableCell>
+                                                    )
+                                            }
+                                        }
+
+                                        return (
+                                            <TableCell 
+                                                key={cell.id}
+                                                className="text-white"
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        )
+                                    })}
                                 </TableRow>
                             ))
                         ) : (

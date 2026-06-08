@@ -119,7 +119,7 @@ export default function SignInForm() {
                                         </FormControl>
                                         <FormMessage>
                                             {Array.isArray(emailFormErr) && typeof emailFormErr !== null ? (
-                                                <ul className="space-y-8 list-decimal list-inside">
+                                                <ul className="list-decimal list-inside space-y-8">
                                                     {emailFormErr.map((err, i) => (
                                                         <li key={i}>{err}</li>
                                                     ))}
@@ -140,7 +140,7 @@ export default function SignInForm() {
                                         </FormControl>
                                         <FormMessage>
                                             {Array.isArray(pwdFormErr) && typeof pwdFormErr !== null ? (
-                                                    <ul className="space-y-8 list-decimal list-inside">
+                                                    <ul className="list-decimal list-inside space-y-8">
                                                         {pwdFormErr.map((err, i) => (
                                                             <li key={i}>{err}</li>
                                                         ))}

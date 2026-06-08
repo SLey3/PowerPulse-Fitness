@@ -87,7 +87,7 @@ export default function Dashboard() {
         <div className="container px-4 py-8 mx-auto">
             <h1 className="mb-6 text-3xl font-bold">Fitness Dashboard</h1>
             
-            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
+            <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
                 <Card>
                     <CardContent className="pt-6">
                         <div className="text-2xl font-bold">1,240</div>

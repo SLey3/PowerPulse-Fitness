@@ -129,7 +129,7 @@ export default function CreateLog() {
     console.log("should be a json: ", typeof exercises)
     
     const exercise_searchable_terms = exercises
-        ? exercises.map((exercise) => {
+        ? exercises.map((exercise: { name: string, muscle: string }) => {
             return {
                 value: exercise.name,
                 label: exercise.name.toUpperCase(),
@@ -142,9 +142,9 @@ export default function CreateLog() {
         console.log("e: ", e)
         form.setValue(`routine.${curIndex}.exercise`, e)
     }
-    const setExerciseWeightUnitValue = (curIndex: number) => {return partial(form.setValue, `routine.${curIndex}.weightUnit`)}
-    const setExerciseTimeFormat = (curIndex: number) => {return partial(form.setValue, `routine.${curIndex}.time_format`)}
-    const setFormCategories = partial(form.setValue, "categories")
+    const setExerciseWeightUnitValue = (curIndex: number) => {return partial<typeof form.setValue>(form.setValue, `routine.${curIndex}.weightUnit`)}
+    const setExerciseTimeFormat = (curIndex: number) => {return partial<typeof form.setValue>(form.setValue, `routine.${curIndex}.time_format`)}
+    const setFormCategories = partial<typeof form.setValue>(form.setValue, "categories")
 
     async function onExerciseAddMore(index: number) {
         const exValid = await form.trigger(`routine.${index}.exercise`)

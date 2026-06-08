@@ -49,7 +49,7 @@ export function ComboBox({ searchable_terms, defaultLabels, currentValue, setVal
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-full justify-between text-muted-foreground overflow-hidden text-ellipsis"
+                    className="justify-between w-full overflow-hidden text-muted-foreground text-ellipsis"
                 >
                     {currentValue
                         ? searchable_terms.find(term => term.value === currentValue)?.label

@@ -59,10 +59,10 @@ export default function ExerciseEditPage() {
     if (data && 'statusCode' in data) return `Required data could not be fetched (Code: ${data.statusCode})`
     if (data && !data.custom || !data) return (
         <>
-            <div className="antialiased overscroll-none overflow-x-hidden min-h-screen text-white">
+            <div className="min-h-screen overflow-x-hidden antialiased text-white overscroll-none">
                 <div className="absolute top-1/4 md:top-[37%] left-0 md:left-[1.5%] lg:left-[5%] xl:left-1/5 bg-gray-900 border border-gray-800 shadow-2xl rounded-2xl p-20 md:py-20 md:px-[calc(10rem_-_(5rem_/_2))]">
                     <OctagonXIcon className="md:absolute md:top-[40%] text-red-700 size-11" /> 
-                    <h1 className="md:relative md:left-1/6 lg:left-1/12 font-bold text-2xl md:text-4xl tracking-tighter md:tracking-normal">
+                    <h1 className="text-2xl font-bold tracking-tighter md:relative md:left-1/6 lg:left-1/12 md:text-4xl md:tracking-normal">
                         {!data
                             ? 'Exercise does not exist. Check ID.'
                             : 'Operation not allowed on a preset exercise'}

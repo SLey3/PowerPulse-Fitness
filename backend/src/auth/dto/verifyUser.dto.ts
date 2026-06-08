@@ -1,3 +1,3 @@
 export class VerifyUserDto {
-    jwt: string
+  jwt: string;
 }

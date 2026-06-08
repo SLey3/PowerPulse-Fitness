@@ -16,7 +16,7 @@ export default async function authPage() {
                     defaultValue="sign-in"
                     className="w-[250px] md:w-[400px] mx-auto"
                 >
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="w-full grid grid-cols-2">
                         <TabsTrigger value="sign-in">Sign In</TabsTrigger>
                         <TabsTrigger value="sign-up">Sign Up</TabsTrigger>
                     </TabsList>

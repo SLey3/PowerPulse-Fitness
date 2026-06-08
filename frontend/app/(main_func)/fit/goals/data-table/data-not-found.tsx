@@ -15,7 +15,7 @@ export function TableNotFound({ columns }: { columns: ColumnDef<GoalMainPageProp
     
     return (
         <TableRow>
-            <TableCell colSpan={columns.length} className="h-24 text-sm/6 text-center whitespace-pre-line">
+            <TableCell colSpan={columns.length} className="h-24 text-center whitespace-pre-line text-sm/6">
                 No Fitness Goals to Show. {"\n"}
                 <Link
                     href={`${pathname}/create`}

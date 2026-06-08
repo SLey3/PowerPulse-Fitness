@@ -1,5 +1,9 @@
-export function generateSignUpHtml(name: string, frontend_url: string, confirmation_token: string): string {
-    return `
+export function generateSignUpHtml(
+  name: string,
+  frontend_url: string,
+  confirmation_token: string,
+): string {
+  return `
         <!DOCTYPE html>
         <html>
         <head>
@@ -62,5 +66,5 @@ export function generateSignUpHtml(name: string, frontend_url: string, confirmat
             </div>
         </body>
         </html>
-        `
+        `;
 }

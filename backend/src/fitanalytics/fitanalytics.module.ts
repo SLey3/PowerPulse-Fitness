@@ -1,14 +1,11 @@
-import { Module } from '@nestjs/common'
+import { Module } from '@nestjs/common';
 
-import { FitAnalyticsService } from './fitanalytics.service'
-import { FitGoalsModule } from 'src/fitgoals/fitgoals.module'
-
+import { FitAnalyticsService } from './fitanalytics.service';
+import { FitGoalsModule } from '@/src/fitgoals/fitgoals.module';
 
 @Module({
-    imports: [
-        FitGoalsModule
-    ],
-    controllers: [],
-    providers: [FitAnalyticsService]
+  imports: [FitGoalsModule],
+  controllers: [],
+  providers: [FitAnalyticsService],
 })
 export class FitAnalyticsModule {}

@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import Cookies from "js-cookie"
 import dayjs from 'dayjs'
 import calendar from 'dayjs/plugin/calendar'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import axios from "axios"
 import { toast } from "sonner"
 import type { MakeNavLinksReturnT } from "../routes"
@@ -10,6 +12,8 @@ import type { ApiErrProps } from "../actions/types"
 import type { CreateSonnerCookieProps } from "./types"
 
 dayjs.extend(calendar)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 // util functions
 /**
@@ -36,36 +40,50 @@ export function filter_navlinks(links: MakeNavLinksReturnT[], category: string):
 }
 
 
-
 /**
- * Formats the creation or update timestamp for log items in a human-readable format.
- * Uses dayjs calendar formatting to show relative time descriptions like "today", "yesterday", or "last week".
- * For update timestamps, it only shows the updated format if the update time is after the creation time.
- * 
- * @template T - The type parameter (not used in the function body)
- * @param {T} row - The log item containing createdAt and updatedAt timestamps
- * @param {'createdAt' | 'updatedAt'} name - Specifies which timestamp to format
- * @returns {string} A formatted string representing the timestamp in a user-friendly format
+ * Formats a UTC date string into a human-readable, locale-aware label based on
+ * its relationship to the current time and the field it represents.
+ *
+ * The date is converted from UTC to the user's local timezone before formatting.
+ * Output uses calendar-relative language (e.g. "today", "yesterday", "last Monday")
+ * for recent dates and falls back to an absolute date for older ones.
+ *
+ * @param date - A UTC date string (e.g. an ISO 8601 timestamp from the API).
+ * @param name - The semantic role of the date, which controls the label prefix:
+ *   - `"createdAt"` — prefixes with "Created" (e.g. "Created today at 3:00 PM")
+ *   - `"updatedAt"` — prefixes with "Updated" (e.g. "Updated last Monday at 9:00 AM")
+ *   - `"completeBy"` — prefixes with "Due" or "Overdue" (e.g. "Due 06/15/2025 5:00 PM")
+ * @returns A formatted, human-readable date string.
  */
-export function formatItemsCrUpdDate<T extends Record<string, any>>(row: T, name: 'createdAt' | 'updatedAt'): string {
-  const createdAt = dayjs(row.createdAt)
-  const updatedAt = dayjs(row.updatedAt)
+export function formatItemsCrUpdCbDate(date: string, name: 'createdAt' | 'updatedAt' | 'completeBy'): string {
+  const userTz = dayjs.tz.guess()
+  const actualDate = dayjs.utc(date).tz(userTz)
+  const now = dayjs().tz(userTz)
+
   if (name === 'updatedAt') {
-    if (updatedAt > createdAt) {
-      return dayjs().calendar(updatedAt, {
-          sameDay: "[Updated today at] h:mm A",
-          lastDay: "[Updated yesterday at] h:mm A",
-          lastWeek: "[Updated last] dddd [at] h:mm A",
-          sameElse: "[Updated at] DD/MM/YYYY",
-      })
-    }
+    return actualDate.calendar(now, {
+      sameDay: "[Updated today at] h:mm A",
+      lastDay: "[Updated yesterday at] h:mm A",
+      lastWeek: "[Updated last] dddd [at] h:mm A",
+      sameElse: "[Updated at] MM/DD/YYYY",
+    })
   }
 
-  return dayjs().calendar(createdAt, {
+  if (name === 'createdAt') {
+    return actualDate.calendar(now, {
       sameDay: "[Created today at] h:mm A",
       lastDay: "[Created yesterday at] h:mm A",
       lastWeek: "[Created last] dddd [at] h:mm A",
-      sameElse: "[Created at] DD/MM/YYYY",
+      sameElse: "[Created at] MM/DD/YYYY",
+    })
+  }
+
+  // completeBy
+  return actualDate.calendar(now, {
+    sameDay: "[Due today by] h:mm A",
+    lastDay: "[Due yesterday at] h:mm A",
+    lastWeek: "[Overdue]",
+    sameElse: "[Due] MM/DD/YYYY h:mm A",
   })
 }
 
@@ -203,6 +221,21 @@ export function executeToast(bread: string) {
         }
 
       Cookies.remove('bread')
+}
+
+
+/**
+ * Copies a direct view URL for a data table row record to the clipboard and notifies the user.
+ *
+ * Used exclusively in data table action menus (e.g. the "Copy ... Url" dropdown item)
+ * to let users share a deep-link to a specific record's view page.
+ *
+ * @param {string | number} itemId - The record's ID, appended to the current page URL as `/view/{itemId}`.
+ */
+export function handleTableCellURLCopy(itemId: string | number) {
+    navigator.clipboard.writeText(`${window.location.href}/view/${itemId}`)
+
+    toast.success("link copied to clipboard!")
 }
 
 /**

@@ -25,8 +25,8 @@ export default async function ViewExercise({
 
     if (!exercise) return (
         <>
-        <div className="container mx-auto px-4 py-8">
-            <div className="border-2 bg-white font-medium text-black shadow-lg shadow-slate-100/50 h-auto p-10 rounded-md">
+        <div className="container px-4 py-8 mx-auto">
+            <div className="h-auto p-10 font-medium text-black bg-white border-2 shadow-lg shadow-slate-100/50 rounded-md">
                 <Link href="..">
                     <Button variant="link" className="text-black">
                         <MoveLeft className="size-4" /> Back to Exercises
@@ -47,8 +47,8 @@ export default async function ViewExercise({
 
     return (
         <>
-            <div className="flex items-center justify-center min-h-screen min-w-screen px-4 py-8">
-                <div className="w-full max-w-4xl border-2 bg-white font-medium text-black shadow-lg shadow-slate-100/50 h-auto p-6 sm:p-10 rounded-md space-y-8">
+            <div className="flex items-center justify-center min-h-screen px-4 py-8 min-w-screen">
+                <div className="w-full h-auto max-w-4xl p-6 font-medium text-black bg-white border-2 shadow-lg shadow-slate-100/50 sm:p-10 rounded-md space-y-8">
                     <div>
                         <Link href="..">
                             <Button variant="link" className="text-black">
@@ -56,7 +56,7 @@ export default async function ViewExercise({
                             </Button>
                         </Link>
                     </div>
-                    <div className="grid shadow-2xl grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-20 py-5 justify-items-center">
+                    <div className="py-5 shadow-2xl grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-20 justify-items-center">
                         <motion.div 
                             id="name"
                             initial={false}
@@ -246,7 +246,7 @@ export default async function ViewExercise({
                                 </p>
                             </div>
                             <div>
-                                <p className="leading-2 tracking-tight md:tracking-wide">
+                                <p className="tracking-tight leading-2 md:tracking-wide">
                                     {exercise.notes
                                         ? exercise.notes
                                         : 'No notes were provided.'

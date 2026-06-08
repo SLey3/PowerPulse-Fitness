@@ -32,33 +32,38 @@ import {
     SelectTrigger, 
     SelectValue 
 } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
 
-const formSchema = z.object({
+const baseSchema = z.object({
     firstName: z.string().nonempty("First name must not be empty"),
     lastName: z.string().nonempty("Last name must not be empty"),
-    email: z.string()
-            .nonempty("Email must not be empty")
-            .min(2, "Email must be at least 2 characters")
-            .max(50, "Email must be at most 50 characters"),
-    password: z.string()
-                .nonempty("Password must not be empty")
-                .min(5, "Password must be at 5 characters")
-                .max(95, "Password must be at most 95 characters"),
-    confirmPwd: z.string()
-                    .nonempty("Confirm Password must not be empty"),
-    phone: z.string()
-            .max(15, "Phone number must be 15 characters or less")
-            .optional(),
-    weight: z.number({ coerce: true })
-                .nonnegative("weight cannot be negative"),
-    unitPref: z.string()
-}).refine((data) => data.password === data.confirmPwd, {
-    message: "Passwords must match",
-        path: ["confirmPwd"]
-})
+    email: z.string().nonempty().email().min(2).max(50),
+    password: z.string().nonempty().min(5).max(95),
+    confirmPwd: z.string().nonempty(),
+    phone: z.string().max(25).optional(),
+    weight: z.number({ coerce: true }).nonnegative(),
+    tos: z.boolean()
+});
+
+const formSchema = z.discriminatedUnion("unitPref", [
+    baseSchema.extend({
+        unitPref: z.literal("METRIC"),
+        heightMetric: z.number({ coerce: true }).min(1.21).max(2.26),
+        heightImperial: z.null(),
+    }),
+    baseSchema.extend({
+        unitPref: z.literal("IMPERIAL"),
+        heightMetric: z.null(),
+        heightImperial: z.object({
+            feet: z.number({ coerce: true }).min(4).max(7),
+            inches: z.number({ coerce: true }).min(0).max(11),
+        }),
+    }),
+]).refine(
+    (data) => data.password === data.confirmPwd,
+    { message: "Passwords must match", path: ["confirmPwd"] }
+);
 
 interface FormErr {
     message: string[] | string
@@ -78,11 +83,18 @@ export default function SignUpForm() {
             email: "",
             password: "",
             confirmPwd: "",
-            phone: "",
+            phone: undefined,
+            unitPref: "IMPERIAL",
             weight: 0,
-            unitPref: "lbs"
+            heightImperial: {
+                feet: 0,
+                inches: 0
+            },
+            heightMetric: null
         }
     })
+
+    const unitPref = form.watch("unitPref")
 
 
     const onPage1Next = async () => {
@@ -105,9 +117,15 @@ export default function SignUpForm() {
     }
 
     const onSubmit = (values: z.infer<typeof formSchema>) => {
-        if (values.phone === "") delete values.phone
+        const {heightImperial, heightMetric, confirmPwd, tos, ...valuesPayload } = values
 
-        axios.post("/api/auth/signup", values)
+        const payload = {
+            height: heightMetric ?? [heightImperial.feet, heightImperial.inches],
+            ...valuesPayload
+            
+        }
+
+        axios.post("/api/auth/signup", payload)
         .then((res: AxiosResponse<{"access_token": string}>) => {
             Cookies.set('t', res.data.access_token, {
                 expires: 10 * 86_400,
@@ -135,9 +153,9 @@ export default function SignUpForm() {
                     <CardTitle>Sign Up</CardTitle>
                     <CardDescription>Create your account with PowerPulse Fitness</CardDescription>
                     <div className={`${masterErrors ? 'block' : 'hidden'} py-3 bg-red-300/40 rounded-md text-destructive text-sm w-full`}>
-                        <ul className="space-y-px list-decimal list-inside">
-                            {masterErrors?.map((err, i) => (
-                                <li key={i}>{err}</li>
+                        <ul className="list-decimal list-inside space-y-px">
+                            {masterErrors?.map((err) => (
+                                <li key={err}>{err}</li>
                             ))}
                         </ul>
                     </div>
@@ -145,169 +163,254 @@ export default function SignUpForm() {
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div
-                                id="pg-1"
-                                className={`${page === 1 ? 'block' : 'hidden'} space-y-8`}
-                            >
-                                <FormField
-                                    control={form.control}
-                                    name="firstName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="lastName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button 
-                                    type="button" 
-                                    onClick={onPage1Next} 
-                                    className="w-full mt-4 cursor-pointer" 
-                                    variant="secondary"
+                            {page === 1 && (
+                                <div
+                                    id="pg-1"
+                                    className="block space-y-8"
                                 >
-                                    Next
-                                </Button>
-                            </div>
-                            <div
-                                id="pg-2"
-                                className={`${page === 2 ? 'block' : 'hidden'} space-y-8`}
-                            >
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Email <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Input type="email" placeholder="example@example.com" {...field} />
-                                            </FormControl>
-                                            <FormDescription>
-                                                this will be your username
-                                            </FormDescription>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Input type="password" placeholder="Enter password..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="confirmPwd"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Confirm Password <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <Input type="password" placeholder="Enter password ..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button type="button" onClick={onPage2Next} variant="secondary" className="w-full cursor-pointer">Next</Button>
-                                <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
-                                    Back
-                                </Button>
-                            </div>
-                            <div
-                                id="pg-3"
-                                className={`${page === 3 ? 'block' : 'hidden'} space-y-8`}
-                            >
-                                <FormField
-                                    control={form.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Phone</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Enter phone number..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="weight"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Weight <span className="text-red-500">*</span></FormLabel>
-                                            <FormControl>
-                                                <div className="flex flex-row content-center w-full">
-                                                    <div>
-                                                        <Input type="number" placeholder="Enter your weight..."  {...field}  />
-                                                    </div>
-                                                    <div>
-                                                        <FormField
-                                                            control={form.control}
-                                                            name="unitPref"
-                                                            render={({ field }) => (
-                                                                <FormItem>
-                                                                    <FormControl>
-                                                                        <Select>
-                                                                            <SelectTrigger className="w-auto">
-                                                                                <SelectValue placeholder="Select preferred unit" />
-                                                                            </SelectTrigger>
-                                                                            <SelectContent {...field}>
-                                                                                <SelectItem value="lbs">lbs</SelectItem>
-                                                                                <SelectItem value="kgs">kgs</SelectItem>
-                                                                            </SelectContent>
-                                                                        </Select>
-                                                                    </FormControl>
-                                                                </FormItem>
-                                                            )}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <div className="flex flex-col items-start py-px">
-                                    <div>
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox id="conf-terms" required />
-                                            <Label
-                                                htmlFor="terms"
-                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                            >
-                                                Accept terms and conditions
-                                            </Label>
+                                    <FormField
+                                        control={form.control}
+                                        name="firstName"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>First Name <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="lastName"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Last Name <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button 
+                                        type="button" 
+                                        onClick={onPage1Next} 
+                                        className="w-full mt-4 cursor-pointer" 
+                                        variant="secondary"
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            )}
+                            {page === 2 && (
+                                <div
+                                    id="pg-2"
+                                    className="block space-y-8"
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name="email"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input type="email" placeholder="example@example.com" {...field} />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    this will be your username
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Password <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input type="password" placeholder="Enter password..." {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="confirmPwd"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Confirm Password <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input type="password" placeholder="Enter password ..." {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="button" onClick={onPage2Next} variant="secondary" className="w-full cursor-pointer">Next</Button>
+                                    <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
+                                        Back
+                                    </Button>
+                                </div>
+                            )}
+                            {page === 3 && (
+                                <div
+                                    id="pg-3"
+                                    className="block space-y-8"
+                                >
+                                    <FormField
+                                        control={form.control}
+                                        name="phone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Phone</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="+1 (111) 111-1111" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="unitPref"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Preferred Unit</FormLabel>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger className="w-auto">
+                                                            <SelectValue placeholder="Select preferred unit" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="IMPERIAL">Imperial</SelectItem>
+                                                            <SelectItem value="METRIC">Metric</SelectItem>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Sets measurement units that will be used globally
+                                                </FormDescription>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="weight"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Weight <span className="text-red-500">*</span></FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" placeholder="Enter your weight..."  {...field}  />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name={unitPref === "METRIC" ? "heightMetric" : "heightImperial"}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Height <span className="text-red-500">*</span></FormLabel>
+                                                {unitPref === "METRIC"
+                                                    ? (
+                                                        <>                                                        
+                                                            <FormControl>
+                                                                <Input 
+                                                                    type="number" 
+                                                                    placeholder="e.x. 1.67" 
+                                                                    onChange={field.onChange} 
+                                                                    value={field.value as number} 
+                                                                    ref={field.ref}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex flex-row gap-x-2">
+                                                            <div>
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name="heightImperial.feet"
+                                                                    render={({ field }) => (
+                                                                        <FormItem>
+                                                                            <div className="flex flex-row gap-x-2">
+                                                                                <FormControl>
+                                                                                    <Input
+                                                                                        type="number"
+                                                                                        placeholder="e.x. 5"
+                                                                                        {...field}
+                                                                                    />
+                                                                                </FormControl>
+                                                                                <FormLabel className="text-2xl">'</FormLabel>
+                                                                            </div>
+                                                                            <FormMessage />
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <FormField
+                                                                    control={form.control}
+                                                                    name="heightImperial.inches"
+                                                                    render={({ field }) => (
+                                                                        <FormItem>
+                                                                            <div className="flex flex-row">
+                                                                                <FormControl>
+                                                                                    <Input
+                                                                                        type="number"
+                                                                                        placeholder="e.x. 7"
+                                                                                        {...field}
+                                                                                    />
+                                                                                </FormControl>
+                                                                                <FormLabel className="text-2xl indent-2">"</FormLabel>
+                                                                            </div>
+                                                                            <FormMessage />
+                                                                        </FormItem>
+                                                                    )}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <div className="flex flex-col items-start py-px">
+                                        <div>
+                                            <div className="flex items-center space-x-2">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="tos"
+                                                    render={(({ field }) => (
+                                                        <FormItem className="flex flex-row gap-x-2.5">
+                                                            <FormControl>
+                                                                <Checkbox
+                                                                    checked={field.value}
+                                                                    onCheckedChange={field.onChange}
+                                                                    ref={field.ref}
+                                                                />
+                                                            </FormControl>
+                                                            <FormLabel className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                                                Accept terms and conditions
+                                                            </FormLabel>
+                                                        </FormItem>
+                                                    ))}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
+                                    <Button type="submit" className="w-full cursor-pointer">Sign Up</Button>
+                                    <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
+                                        Back
+                                    </Button>
                                 </div>
-                                <Button type="submit" className="w-full cursor-pointer">Sign Up</Button>
-                                <Button type="button" onClick={onBack} variant="outline" className="w-1/2 cursor-pointer text-muted-foreground">
-                                    Back
-                                </Button>
-                            </div>
+                            )}
                         </form>
                     </Form>
                 </CardContent>

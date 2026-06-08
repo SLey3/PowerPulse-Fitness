@@ -4,8 +4,8 @@ import * as motion from 'motion/react-client'
 export default function About() {
     return (
         <>
-            <div className="size-full space-y-45 pl-5 pb-32">
-                <div className="border-l-2 border-l-white ps-4 rounded-l-sm flex flex-col gap-y-10 content-center">
+            <div className="pb-32 pl-5 size-full space-y-45">
+                <div className="flex flex-col content-center border-l-2 rounded-l-sm border-l-white ps-4 gap-y-10">
                     <motion.div
                         initial={{ 
                             opacity: 0, 
@@ -61,9 +61,9 @@ export default function About() {
                             ease: ['linear']
                         }}
                     >
-                        <h1 className="text-3xl text-center font-semibold">Our Mission</h1>
+                        <h1 className="text-3xl font-semibold text-center">Our Mission</h1>
                     </motion.div>
-                    <div className="flex flex-col md:flex-row items-center md:ml-64 gap-14">
+                    <div className="flex flex-col items-center md:flex-row md:ml-64 gap-14">
                         <motion.div
                             className="w-1/2 mx-auto"
                             initial={{
@@ -79,7 +79,7 @@ export default function About() {
                                 ease: ['linear']
                             }}
                         >
-                            <div className="border-l-2 border-l-white rounded-l-sm ps-4 min-w-44 max-w-1/2">
+                            <div className="border-l-2 rounded-l-sm border-l-white ps-4 min-w-44 max-w-1/2">
                                 <p className="font-light break-words">
                                     Our mission at PowerPulse Fitness is to provide a comprehensive fitness tracking solution that empowers users of all levels. 
                                     We strive to deliver an intuitive platform where anyone can easily log workouts, set personalized fitness goals, and track their progress over time. 
@@ -103,7 +103,7 @@ export default function About() {
                                 ease: ['linear']
                             }}
                         >
-                            <div className="border-l-2 border-l-white rounded-l-sm ps-4 max-w-prose">
+                            <div className="border-l-2 rounded-l-sm border-l-white ps-4 max-w-prose">
                                 <ul className="font-light list-[upper-roman] list-inside">
                                     <li>Workout Logging</li>
                                     <li>Fitness Goals</li>

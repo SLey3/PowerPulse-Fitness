@@ -21,7 +21,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         success: <CircleCheckIcon className="size-4 text-lime-300" />,
         info: <InfoIcon className="size-4 text-cyan-700" />,
         warning: <TriangleAlertIcon className="size-4 text-amber-300" />,
-        error: <OctagonXIcon className="size-4 text-red-500" />,
+        error: <OctagonXIcon className="text-red-500 size-4" />,
         loading: <Loader2Icon className="size-4 animate-spin" />,
       }}
       style={

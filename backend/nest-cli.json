@@ -20,6 +20,6 @@
         "outDir": "dist/generated",
         "watchAssets": true
       }
-    ]    
+    ]
   }
 }
