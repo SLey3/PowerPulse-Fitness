@@ -1,4 +1,4 @@
 # main .gitignore file for outside backend & frontend ignored paths
-
+.DS_Store
 # vscode
 /.vscode
