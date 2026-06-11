@@ -1,7 +1,13 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import * as motion from 'motion/react-client'
 
-export default function UnauthorizedPage() {
+export const metadata: Metadata = {
+  title: "Unauthorized",
+  description: "Unauthorized page"
+}
+
+export default async function UnauthorizedPage() {
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
       <motion.div

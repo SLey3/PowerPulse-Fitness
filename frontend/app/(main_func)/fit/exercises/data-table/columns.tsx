@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { MoreHorizontal, ArrowUpDown, Plus } from 'lucide-react'
 
+import { handleTableCellURLCopy } from '@/lib/utils'
+
 import { createColumns } from '@/components/ui/data-table'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,7 +23,7 @@ import { ExerciseProps } from '../types'
 
 export const columns = createColumns<ExerciseProps>(
     ({ row }) => {
-        const log = row.original
+        const exercise = row.original
         const pathname = usePathname()
 
         return (
@@ -35,23 +37,23 @@ export const columns = createColumns<ExerciseProps>(
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
-                        onClick={() => navigator.clipboard.writeText(`${window.location.href}/view/${log.id}`)}
+                        onClick={() => handleTableCellURLCopy(exercise.id)}
                     >
                         Copy Exercise Url
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                        <Link href={`${pathname}/view/${log.id}`} className="overflow-hidden text-ellipsis">
-                            View {log.name.length > 20 ? `${log.name.slice(0, 20)}...` : log.name}
+                        <Link href={`${pathname}/view/${exercise.id}`} className="overflow-hidden text-ellipsis">
+                            View {exercise.name.length > 20 ? `${exercise.name.slice(0, 20)}...` : exercise.name}
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem disabled={!log.custom} aria-disabled={!log.custom}>
+                    <DropdownMenuItem disabled={!exercise.custom} aria-disabled={!exercise.custom}>
                         <Link
                             href={{
                                 pathname: `${pathname}/edit`,
-                                query: { id: log.id }
+                                query: { id: exercise.id }
                             }}
-                            aria-disabled={!log.custom}
+                            aria-disabled={!exercise.custom}
                         >
                             Edit Exercise
                         </Link>

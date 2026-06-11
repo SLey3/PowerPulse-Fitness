@@ -44,7 +44,7 @@ export default function CategoryEditForm({
 
             form.setError('name', {
                 type: 'custom',
-                message: msg
+                message: msg as string
             })
         } else {
             createSonnerCookie({

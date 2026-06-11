@@ -29,7 +29,7 @@ export const columns = createColumns<GoalMainPageProps>(
     ({ row }) => {
         const goal = row.original
         const pathname = usePathname()
-        const router = useRouter()
+        const { refresh } = useRouter()
 
         function handleMarkCompletion() {
             const token = Cookies.get("t")
@@ -52,7 +52,7 @@ export const columns = createColumns<GoalMainPageProps>(
             )
             .then(async () => {
                 await revalidateFitGoalsTag()
-                router.refresh()
+                refresh()
             })
         }
 
@@ -89,27 +89,21 @@ export const columns = createColumns<GoalMainPageProps>(
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         className={cn(
-                            "cursor-pointer",
-                            goal.progress === 100 ? "text-red-500 hover:bg-lime-200/45" : "text-lime-300 hover:bg-red-400/45"
+                            "cursor-pointer text-lime-300 hover:bg-red-400/45",
+                            goal.progress === 100 && "text-red-500 hover:bg-lime-200/45"
                         )}
                         onClick={() => handleMarkCompletion()}
                     >
                         {goal.progress === 100 ? (
                             <>
                                 <p className="indent-5">                          
-                                    <span>
-                                        <X className="absolute pt-1 text-red-500" />
-                                    </span>
-                                    Unmark Complete
+                                    <X className="size-4 text-red-500" /> Unmark Complete
                                 </p>
                             </>
                         ) : (
                             <>
                                 <p className="indent-5">                          
-                                    <span>
-                                        <Check className="absolute pt-1 text-lime-300" />
-                                    </span>
-                                    Mark Complete
+                                    <Check className="size-4 text-lime-300" /> Mark Complete
                                 </p>
                             </>
                         )}

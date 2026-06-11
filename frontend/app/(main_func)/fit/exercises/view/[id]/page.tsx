@@ -1,12 +1,39 @@
 
 import { getExercise } from "@/lib/actions"
 
+import type { Metadata, ResolvingMetadata } from "next"
 import Link from "next/link"
 import { cookies } from "next/headers"
 import { MoveLeft, Check, X } from "lucide-react"
 import * as motion from 'motion/react-client'
 
 import { Button } from "@/components/ui/button"
+
+type Prop = {
+    params: Promise<{ id: string }>
+}
+
+export async function generateMetadata(
+    { params }: Prop, 
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+    const { id } = await params
+    const cookieStore = await cookies()
+
+    if (cookieStore.has("t")) {
+        const exercise = await getExercise(cookieStore.get("t")!.value, id)
+
+        if (exercise && 'name' in exercise) {
+            return {
+                title: exercise.name,
+            }
+        }
+    }
+
+    return {
+        title: (await parent).title
+    }
+}
 
 
 export default async function ViewExercise({
@@ -41,7 +68,7 @@ export default async function ViewExercise({
     )
     if ('statusCode' in exercise) return (
         <>
-            <p className="indent-4">`Failed to load page. Error received ({exercise.statusCode}): {exercise.message}`</p>
+            <p className="indent-4">`Failed to load page. Error received ({exercise.statusCode}): {exercise.message as string}`</p>
         </>
     )
 
